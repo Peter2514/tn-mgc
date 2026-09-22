@@ -8,17 +8,30 @@
 <!--
   ÍNDICE — TN CLASE 3 · MG-C PERGAMINO · 2026
   =========================================================
-  Para agregar una fecha nueva: copiá un bloque { ... } de la lista FECHAS
-  (más abajo, en el <script>) y pegalo ARRIBA DE TODO, dentro de los [ ].
-  - "ultima: true" pone la etiqueta ÚLTIMA FECHA y deja la tarjeta abierta.
-    Acordate de sacarle el "ultima: true" a la fecha anterior.
-  - Los "tipo:" pintan el color del botón: tiempos / cpp / ritmo / evolucion
-  - Los "u:" son las direcciones, y admiten tres formas:
-      "/rio-cuarto/final"       → una página de este mismo sitio de Google
-      "p:/rio-cuarto/ritmo"     → un análisis publicado aparte (GitHub Pages).
-                                   La "p:" se reemplaza sola por lo que pongas
-                                   en PAGES, más abajo.
-      "https://..."             → cualquier dirección completa, tal cual
+  CÓMO FUNCIONA
+  Cada evento del fin de semana (entrenamientos, clasificación, series y final)
+  muestra siempre los tres análisis: CPP, Ritmo y Evolución. El primer evento
+  no lleva Evolución, porque no hay nada anterior contra qué compararlo: para
+  ese se pone  primera:true .
+
+  Lo que todavía no está hecho aparece en gris y no se puede tocar. Así el
+  índice te sirve también de checklist de lo que falta del fin de semana.
+
+  CARGAR UN ANÁLISIS
+  Le agregás la dirección al evento que corresponda:
+
+      { n:"Clasificación", cpp:"/rio-cuarto/clasificacion" }
+      { n:"Clasificación", cpp:"/rio-cuarto/clasificacion", ritmo:"p:/Ritmo_Clasif.html" }
+
+  Las direcciones admiten tres formas:
+      "/rio-cuarto/final"      → una página de este mismo sitio de Google
+      "p:/Ritmo_Final.html"    → un archivo tuyo de GitHub. La "p:" se
+                                 reemplaza sola por lo que diga PAGES.
+      "https://..."            → cualquier dirección completa, tal cual
+
+  FECHA NUEVA
+  Copiás un bloque entero de FECHAS, lo pegás arriba de todo y le cambiás los
+  datos. Acordate de sacarle el  ultima:true  a la fecha anterior.
   =========================================================
 -->
 
@@ -35,6 +48,7 @@
     --line-soft:#1E232A;
     --text:#EDEFF2;
     --muted:#8E96A1;
+    --apagado:#4A525C;
     --amber:#F5A623;
     --cyan:#4FC3F7;
     --green:#5BD18C;
@@ -116,10 +130,10 @@
   }
   .ref{display:inline-flex;align-items:center;gap:6px;}
   .dot{width:8px;height:8px;border-radius:50%;flex:none;}
-  .dot.tiempos{background:var(--text);}
   .dot.cpp{background:var(--cyan);}
   .dot.ritmo{background:var(--amber);}
-  .dot.evolucion{background:var(--green);}
+  .dot.evo{background:var(--green);}
+  .dot.falta{background:transparent;border:1px dashed var(--apagado);}
 
   /* ---------- Fechas ---------- */
   .fechas{display:flex;flex-direction:column;gap:10px;}
@@ -187,6 +201,14 @@
     border-radius:3px;
     white-space:nowrap;
   }
+  .avance{
+    font-family:var(--cond);
+    font-size:11px;
+    letter-spacing:.1em;
+    color:var(--apagado);
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
   .chev{
     flex:none;
     width:11px;height:11px;
@@ -243,11 +265,14 @@
   .chip:hover{background:#242A33;border-color:#3A424E;}
   .chip .dot{width:7px;height:7px;}
 
-  .vacio{
-    font-size:13px;
-    color:var(--muted);
-    padding:11px 0;
+  .chip.falta{
+    background:transparent;
+    border-style:dashed;
+    border-color:#222830;
+    color:var(--apagado);
+    cursor:default;
   }
+  .chip.falta:hover{background:transparent;border-color:#222830;}
 
   .pie{
     margin-top:18px;
@@ -296,10 +321,10 @@
   </header>
 
   <div class="refs">
-    <span class="ref"><span class="dot tiempos"></span>Tiempos</span>
-    <span class="ref"><span class="dot cpp"></span>Clasificados por parciales</span>
+    <span class="ref"><span class="dot cpp"></span>CPP</span>
     <span class="ref"><span class="dot ritmo"></span>Ritmo</span>
-    <span class="ref"><span class="dot evolucion"></span>Evolución</span>
+    <span class="ref"><span class="dot evo"></span>Evolución</span>
+    <span class="ref"><span class="dot falta"></span>Pendiente</span>
   </div>
 
   <main class="fechas" id="fechas"></main>
@@ -313,15 +338,13 @@
 
 <script>
 /* =========================================================
-   DATOS — acá se agregan las fechas nuevas
+   DATOS
    ========================================================= */
 
 /* Sitio de Google, donde están las carreras ya cargadas */
 var BASE  = "https://sites.google.com/view/turismonacionalmgc-2026";
 
-/* Análisis publicados aparte. Completar una sola vez con tu dirección de
-   GitHub Pages, SIN la barra final. Ejemplo:
-   var PAGES = "https://TUUSUARIO.github.io/tn-mgc";                         */
+/* Análisis publicados aparte, en GitHub Pages. Sin la barra final. */
 var PAGES = "https://peter2514.github.io/tn-mgc";
 
 var FECHAS = [
@@ -330,140 +353,101 @@ var FECHAS = [
     sede: "Autódromo Ciudad de Río Cuarto · 3.230 km",
     cuando: "Fecha 9 · 20/09/26",
     ultima: true,
-    sesiones: [
-      { nombre: "1er Entrenamiento", links: [
-        { t:"CPP", tipo:"cpp", u:"/rio-cuarto/1-er-entrenamiento" }
-      ]},
-      { nombre: "2do Entrenamiento", links: [
-        { t:"CPP", tipo:"cpp", u:"/rio-cuarto/2do-entrenamiento" }
-      ]},
-      { nombre: "Clasificación", links: [
-        { t:"CPP", tipo:"cpp", u:"/rio-cuarto/clasificacion" }
-      ]},
-      { nombre: "1era Serie", links: [
-        { t:"Ritmo", tipo:"ritmo", u:"p:/Ritmo_TN_C3_Serie1_RioCuarto.html" }
-      ]},
-      { nombre: "2da Serie", links: [
-        { t:"Ritmo", tipo:"ritmo", u:"p:/Ritmo_TN_C3_Serie2_RioCuarto.html" }
-      ]},
-      { nombre: "3era Serie", links: [
-        { t:"Ritmo", tipo:"ritmo", u:"p:/Ritmo_TN_C3_Serie3_RioCuarto.html" }
-      ]},
-      { nombre: "Final", links: [
-        { t:"Tiempos", tipo:"tiempos", u:"/rio-cuarto/final" },
-        { t:"Clasif. por parciales", tipo:"cpp", u:"/rio-cuarto/final/clasificados-por-parciales" },
-        { t:"Ritmo", tipo:"ritmo", u:"p:/Ritmo_TN_C3_Final_RioCuarto.html" }
-      ]},
-      { nombre: "Fin de semana", links: [
-        { t:"Evolución general", tipo:"evolucion", u:"/rio-cuarto/evolucion-general" }
-      ]}
+    eventos: [
+      { n:"1er Entrenamiento", primera:true,
+        cpp:"/rio-cuarto/1-er-entrenamiento" },
+      { n:"2do Entrenamiento",
+        cpp:"/rio-cuarto/2do-entrenamiento" },
+      { n:"Clasificación",
+        cpp:"/rio-cuarto/clasificacion" },
+      { n:"1era Serie",
+        ritmo:"p:/Ritmo_TN_C3_Serie1_RioCuarto.html" },
+      { n:"2da Serie",
+        ritmo:"p:/Ritmo_TN_C3_Serie2_RioCuarto.html" },
+      { n:"3era Serie",
+        ritmo:"p:/Ritmo_TN_C3_Serie3_RioCuarto.html" },
+      { n:"Final",
+        cpp:"/rio-cuarto/final/clasificados-por-parciales",
+        ritmo:"p:/Ritmo_TN_C3_Final_RioCuarto.html",
+        evo:"/rio-cuarto/evolucion-general" }
     ]
   },
   {
     circuito: "Villicum 2",
     sede: "Autódromo El Villicum · San Juan",
     cuando: "",
-    sesiones: [
-      { nombre: "1er Entrenamiento", links: [
-        { t:"Tiempos", tipo:"tiempos", u:"/villicum-2/entrenamiento-1" },
-        { t:"CPP", tipo:"cpp", u:"/villicum-2/entrenamiento-1/cpp" },
-        { t:"Ritmo", tipo:"ritmo", u:"/villicum-2/entrenamiento-1/analisis-de-ritmo" }
-      ]},
-      { nombre: "2do Entrenamiento", links: [
-        { t:"Tiempos", tipo:"tiempos", u:"/villicum-2/2-do-entrenamiento" },
-        { t:"CPP", tipo:"cpp", u:"/villicum-2/2-do-entrenamiento/cpp" },
-        { t:"Ritmo", tipo:"ritmo", u:"/villicum-2/2-do-entrenamiento/analisis-de-ritmo" },
-        { t:"Evolución", tipo:"evolucion", u:"/villicum-2/2-do-entrenamiento/evolucion-de-tiempos" }
-      ]},
-      { nombre: "Clasificación", links: [
-        { t:"Tiempos", tipo:"tiempos", u:"/villicum-2/clasificacion" },
-        { t:"CPP", tipo:"cpp", u:"/villicum-2/clasificacion/cpp" },
-        { t:"Ritmo", tipo:"ritmo", u:"/villicum-2/clasificacion/ritmo" },
-        { t:"Evolución", tipo:"evolucion", u:"/villicum-2/clasificacion/evolucion" }
-      ]},
-      { nombre: "1era Serie", links: [
-        { t:"Tiempos", tipo:"tiempos", u:"/villicum-2/1era-serie" },
-        { t:"CPP", tipo:"cpp", u:"/villicum-2/1era-serie/cpp" },
-        { t:"Ritmo", tipo:"ritmo", u:"/villicum-2/1era-serie/ritmo" },
-        { t:"Evolución", tipo:"evolucion", u:"/villicum-2/1era-serie/evolucion" }
-      ]},
-      { nombre: "2da Serie", links: [
-        { t:"Tiempos", tipo:"tiempos", u:"/villicum-2/2-da-serie" },
-        { t:"CPP", tipo:"cpp", u:"/villicum-2/2-da-serie/cpp" },
-        { t:"Ritmo", tipo:"ritmo", u:"/villicum-2/2-da-serie/ritmo" },
-        { t:"Evolución", tipo:"evolucion", u:"/villicum-2/2-da-serie/evulucion" }
-      ]},
-      { nombre: "3era Serie", links: [
-        { t:"Tiempos", tipo:"tiempos", u:"/villicum-2/3-era-serie" },
-        { t:"CPP", tipo:"cpp", u:"/villicum-2/3-era-serie/cpp" },
-        { t:"Ritmo", tipo:"ritmo", u:"/villicum-2/3-era-serie/ritmo" },
-        { t:"Evolución", tipo:"evolucion", u:"/villicum-2/3-era-serie/evolucion" }
-      ]}
+    eventos: [
+      { n:"1er Entrenamiento", primera:true,
+        cpp:"/villicum-2/entrenamiento-1/cpp",
+        ritmo:"/villicum-2/entrenamiento-1/analisis-de-ritmo" },
+      { n:"2do Entrenamiento",
+        cpp:"/villicum-2/2-do-entrenamiento/cpp",
+        ritmo:"/villicum-2/2-do-entrenamiento/analisis-de-ritmo",
+        evo:"/villicum-2/2-do-entrenamiento/evolucion-de-tiempos" },
+      { n:"Clasificación",
+        cpp:"/villicum-2/clasificacion/cpp",
+        ritmo:"/villicum-2/clasificacion/ritmo",
+        evo:"/villicum-2/clasificacion/evolucion" },
+      { n:"1era Serie",
+        cpp:"/villicum-2/1era-serie/cpp",
+        ritmo:"/villicum-2/1era-serie/ritmo",
+        evo:"/villicum-2/1era-serie/evolucion" },
+      { n:"2da Serie",
+        cpp:"/villicum-2/2-da-serie/cpp",
+        ritmo:"/villicum-2/2-da-serie/ritmo",
+        evo:"/villicum-2/2-da-serie/evulucion" },
+      { n:"3era Serie",
+        cpp:"/villicum-2/3-era-serie/cpp",
+        ritmo:"/villicum-2/3-era-serie/ritmo",
+        evo:"/villicum-2/3-era-serie/evolucion" },
+      { n:"Final" }
     ]
   },
   {
     circuito: "Villicum 1",
     sede: "Autódromo El Villicum · San Juan",
     cuando: "",
-    sesiones: [
-      { nombre: "1er Entrenamiento", links: [
-        { t:"CPP", tipo:"cpp", u:"/villicum-1-er-carrera/1er-entrenamiento" }
-      ]},
-      { nombre: "2do Entrenamiento", links: [
-        { t:"CPP", tipo:"cpp", u:"/villicum-1-er-carrera/2do-entrenamiento" }
-      ]},
-      { nombre: "Clasificación", links: [
-        { t:"CPP", tipo:"cpp", u:"/villicum-1-er-carrera/clasificacion" },
-        { t:"Análisis", tipo:"ritmo", u:"/villicum-1-er-carrera/clasificacion/analisis-clasificacion" }
-      ]},
-      { nombre: "1era Serie", links: [
-        { t:"CPP", tipo:"cpp", u:"/villicum-1-er-carrera/1er-serie" }
-      ]},
-      { nombre: "2da Serie", links: [
-        { t:"CPP", tipo:"cpp", u:"/villicum-1-er-carrera/2da-serie" }
-      ]},
-      { nombre: "3era Serie", links: [
-        { t:"CPP", tipo:"cpp", u:"/villicum-1-er-carrera/3er-serie" }
-      ]},
-      { nombre: "Final", links: [
-        { t:"Tiempos", tipo:"tiempos", u:"/villicum-1-er-carrera/final" },
-        { t:"Ritmo", tipo:"ritmo", u:"/villicum-1-er-carrera/final/analisis-de-ritmos" }
-      ]},
-      { nombre: "Fin de semana", links: [
-        { t:"Evolución de tiempos", tipo:"evolucion", u:"/villicum-1-er-carrera/evolucion-de-tiempos" }
-      ]}
+    eventos: [
+      { n:"1er Entrenamiento", primera:true,
+        cpp:"/villicum-1-er-carrera/1er-entrenamiento" },
+      { n:"2do Entrenamiento",
+        cpp:"/villicum-1-er-carrera/2do-entrenamiento" },
+      { n:"Clasificación",
+        cpp:"/villicum-1-er-carrera/clasificacion",
+        ritmo:"/villicum-1-er-carrera/clasificacion/analisis-clasificacion" },
+      { n:"1era Serie",
+        cpp:"/villicum-1-er-carrera/1er-serie" },
+      { n:"2da Serie",
+        cpp:"/villicum-1-er-carrera/2da-serie" },
+      { n:"3era Serie",
+        cpp:"/villicum-1-er-carrera/3er-serie" },
+      { n:"Final",
+        cpp:"/villicum-1-er-carrera/final",
+        ritmo:"/villicum-1-er-carrera/final/analisis-de-ritmos",
+        evo:"/villicum-1-er-carrera/evolucion-de-tiempos" }
     ]
   },
   {
     circuito: "Oberá",
     sede: "Autódromo Rosamonte · Misiones",
     cuando: "",
-    sesiones: [
-      { nombre: "Pre carrera", links: [
-        { t:"Pre carrera", tipo:"tiempos", u:"/obera/pre-carrera" }
-      ]},
-      { nombre: "1er Entrenamiento", links: [
-        { t:"CPP", tipo:"cpp", u:"/obera/1-er-entrenamiento" }
-      ]},
-      { nombre: "2do Entrenamiento", links: [
-        { t:"CPP", tipo:"cpp", u:"/obera/2-do-entrenamiento" }
-      ]},
-      { nombre: "Clasificación", links: [
-        { t:"CPP", tipo:"cpp", u:"/obera/clasificacion" }
-      ]},
-      { nombre: "1era Serie", links: [
-        { t:"CPP", tipo:"cpp", u:"/obera/1-era-serie" }
-      ]},
-      { nombre: "2da Serie", links: [
-        { t:"CPP", tipo:"cpp", u:"/obera/2-da-serie" }
-      ]},
-      { nombre: "Final", links: [
-        { t:"Tiempos", tipo:"tiempos", u:"/obera/final" },
-        { t:"Ritmo", tipo:"ritmo", u:"/obera/ritmo-de-la-final" }
-      ]},
-      { nombre: "Fin de semana", links: [
-        { t:"Evolución general", tipo:"evolucion", u:"/obera/evolucion-general" }
-      ]}
+    eventos: [
+      { n:"Pre carrera", primera:true,
+        cpp:"/obera/pre-carrera" },
+      { n:"1er Entrenamiento",
+        cpp:"/obera/1-er-entrenamiento" },
+      { n:"2do Entrenamiento",
+        cpp:"/obera/2-do-entrenamiento" },
+      { n:"Clasificación",
+        cpp:"/obera/clasificacion" },
+      { n:"1era Serie",
+        cpp:"/obera/1-era-serie" },
+      { n:"2da Serie",
+        cpp:"/obera/2-da-serie" },
+      { n:"Final",
+        cpp:"/obera/final",
+        ritmo:"/obera/ritmo-de-la-final",
+        evo:"/obera/evolucion-general" }
     ]
   }
 ];
@@ -474,6 +458,12 @@ var FECHAS = [
 
 (function(){
   var cont = document.getElementById("fechas");
+
+  var TIPOS = [
+    { clave:"cpp",   t:"CPP" },
+    { clave:"ritmo", t:"Ritmo" },
+    { clave:"evo",   t:"Evolución" }
+  ];
 
   function direccion(u){
     if(/^https?:/i.test(u)) return u;
@@ -489,6 +479,8 @@ var FECHAS = [
   }
 
   FECHAS.forEach(function(f){
+    var hechos = 0, totales = 0;
+
     var det = el("details", "fecha" + (f.ultima ? " destacada" : ""));
     if(f.ultima) det.open = true;
 
@@ -499,37 +491,52 @@ var FECHAS = [
     if(f.sede) txt.appendChild(el("div","sede", f.sede));
     sum.appendChild(txt);
 
+    var cuerpo = el("div","cuerpo");
+
+    (f.eventos || []).forEach(function(ev){
+      var fila = el("div","sesion");
+      fila.appendChild(el("div","sesion-nom", ev.n));
+
+      var enlaces = el("div","enlaces");
+      TIPOS.forEach(function(tipo){
+        /* el primer evento del fin de semana no lleva Evolución:
+           no hay actividad anterior contra qué compararlo */
+        if(tipo.clave === "evo" && ev.primera) return;
+
+        totales++;
+        var u = ev[tipo.clave];
+
+        if(u){
+          hechos++;
+          var a = el("a","chip");
+          a.href = direccion(u);
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.appendChild(el("span","dot " + tipo.clave));
+          a.appendChild(document.createTextNode(tipo.t));
+          enlaces.appendChild(a);
+        } else {
+          var s = el("span","chip falta");
+          s.setAttribute("aria-disabled","true");
+          s.title = "Todavía sin cargar";
+          s.appendChild(el("span","dot falta"));
+          s.appendChild(document.createTextNode(tipo.t));
+          enlaces.appendChild(s);
+        }
+      });
+
+      fila.appendChild(enlaces);
+      cuerpo.appendChild(fila);
+    });
+
     var meta = el("div","meta");
     if(f.ultima) meta.appendChild(el("span","pill","Última fecha"));
     if(f.cuando) meta.appendChild(el("span","cuando", f.cuando));
-    if(meta.childNodes.length) sum.appendChild(meta);
-
+    meta.appendChild(el("span","avance", hechos + "/" + totales));
+    sum.appendChild(meta);
     sum.appendChild(el("span","chev"));
+
     det.appendChild(sum);
-
-    var cuerpo = el("div","cuerpo");
-
-    if(!f.sesiones || !f.sesiones.length){
-      cuerpo.appendChild(el("div","vacio","Todavía no hay análisis cargados para esta fecha."));
-    } else {
-      f.sesiones.forEach(function(s){
-        var row = el("div","sesion");
-        row.appendChild(el("div","sesion-nom", s.nombre));
-        var links = el("div","enlaces");
-        s.links.forEach(function(l){
-          var a = el("a","chip");
-          a.href = direccion(l.u);
-          a.target = "_blank";
-          a.rel = "noopener";
-          a.appendChild(el("span","dot " + (l.tipo || "tiempos")));
-          a.appendChild(document.createTextNode(l.t));
-          links.appendChild(a);
-        });
-        row.appendChild(links);
-        cuerpo.appendChild(row);
-      });
-    }
-
     det.appendChild(cuerpo);
     cont.appendChild(det);
   });

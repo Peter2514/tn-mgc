@@ -31,7 +31,27 @@
 
   FECHA NUEVA
   Copiás un bloque entero de FECHAS, lo pegás arriba de todo y le cambiás los
-  datos. Acordate de sacarle el  ultima:true  a la fecha anterior.
+  datos.
+
+  MATERIAL DEL FIN DE SEMANA
+  Arriba de los eventos hay una fila con tres casilleros fijos: Cronograma,
+  Pre Carrera y Sectores Cronometrados. Se cargan igual que los análisis, dentro
+  de  finde:  , y no suman al contador porque no son análisis por evento:
+
+      finde: {
+        cronograma: "p:/Cronograma_Mendoza.png",
+        precarrera: "p:/PreCarrera_Mendoza.html",
+        sectores:   "p:/Sectores_Mendoza.png"
+      },
+
+  El  nro:  es el número de fecha del campeonato y se muestra arriba del
+  nombre del circuito. El  cuando:  es sólo el día, sin el número.
+
+  Dos etiquetas, y una sola por fecha:
+      proxima:true → la carrera que viene, todavía no corrió. Se abre sola.
+      ultima:true  → la última que SÍ corrió.
+  Cuando Mendoza termine, le cambiás  proxima:true  por  ultima:true  y le
+  sacás el  ultima:true  a Río Cuarto.
   =========================================================
 -->
 
@@ -160,6 +180,16 @@
   summary:hover{background:var(--surface-2);}
 
   .fecha-txt{flex:1 1 auto;min-width:0;}
+  .nro{
+    display:block;
+    font-family:var(--cond);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--apagado);
+    margin-bottom:1px;
+  }
   .circuito{
     font-family:var(--cond);
     font-weight:700;
@@ -201,6 +231,12 @@
     padding:2px 7px;
     border-radius:3px;
     white-space:nowrap;
+  }
+  .pill.proxima{
+    color:var(--cyan);
+    background:transparent;
+    border:1px solid var(--cyan);
+    padding:1px 6px;
   }
   .avance{
     font-family:var(--cond);
@@ -350,16 +386,61 @@ var PAGES = "https://peter2514.github.io/tn-mgc";
 
 var FECHAS = [
   {
+    circuito: "Mendoza",
+    nro: 10,
+    sede: "Mendoza",
+    cuando: "",
+    proxima: true,
+    eventos: [
+      { n:"1er Entrenamiento", primera:true },
+      { n:"2do Entrenamiento" },
+      { n:"Clasificación" },
+      { n:"1era Serie" },
+      { n:"2da Serie" },
+      { n:"3era Serie" },
+      { n:"Final" }
+    ]
+  },
+  {
+    circuito: "Concordia",
+    nro: 11,
+    sede: "Entre Ríos",
+    cuando: "",
+    eventos: [
+      { n:"1er Entrenamiento", primera:true },
+      { n:"2do Entrenamiento" },
+      { n:"Clasificación" },
+      { n:"1era Serie" },
+      { n:"2da Serie" },
+      { n:"3era Serie" },
+      { n:"Final" }
+    ]
+  },
+  {
+    circuito: "Viedma",
+    nro: 12,
+    sede: "Río Negro",
+    cuando: "",
+    eventos: [
+      { n:"1er Entrenamiento", primera:true },
+      { n:"2do Entrenamiento" },
+      { n:"Clasificación" },
+      { n:"1era Serie" },
+      { n:"2da Serie" },
+      { n:"3era Serie" },
+      { n:"Final" }
+    ]
+  },
+  {
     circuito: "Río Cuarto",
+    nro: 9,
     sede: "Autódromo Ciudad de Río Cuarto · 3.230 km",
-    cuando: "Fecha 9 · 20/09/26",
+    cuando: "20/09/26",
     ultima: true,
-    /* Material del fin de semana que no es CPP / Ritmo / Evolución:
-       cronograma, adquisición de datos, lo que haga falta. */
-    extras: [
-      { t:"Cronograma",          u:"p:/Cronograma_TN_Clase3_RioCuarto_AZUL.png" },
-      { t:"Pre Carrera",          u:"p:/Valle_Lambiris_RioCuarto_3.html" }
-    ],
+    finde: {
+      cronograma: "p:/Cronograma_TN_Clase3_RioCuarto_AZUL.png",
+      precarrera: "p:/Valle_Lambiris_RioCuarto_3.html"
+    },
     eventos: [
       { n:"1er Entrenamiento", primera:true,
         cpp:"p:/CPP_TN_C3_ENT1_RioCuarto.html" },
@@ -439,6 +520,7 @@ var FECHAS = [
   },
   {
     circuito: "Oberá",
+    nro: 8,
     sede: "Autódromo Rosamonte · Misiones",
     cuando: "",
     eventos: [
@@ -469,6 +551,12 @@ var FECHAS = [
 (function(){
   var cont = document.getElementById("fechas");
 
+  var MATERIAL = [
+    { clave:"cronograma", t:"Cronograma" },
+    { clave:"precarrera", t:"Pre Carrera" },
+    { clave:"sectores",   t:"Sectores Cronometrados" }
+  ];
+
   var TIPOS = [
     { clave:"cpp",   t:"CPP" },
     { clave:"ritmo", t:"Ritmo" },
@@ -488,39 +576,52 @@ var FECHAS = [
     return n;
   }
 
+  /* Si hay una fecha marcada como próxima, esa es la que se abre sola;
+     si no, se abre la última que corrió. */
+  var hayProxima = FECHAS.some(function(f){ return f.proxima; });
+
   FECHAS.forEach(function(f){
     var hechos = 0, totales = 0;
 
-    var det = el("details", "fecha" + (f.ultima ? " destacada" : ""));
-    if(f.ultima) det.open = true;
+    var det = el("details", "fecha" + (f.ultima || f.proxima ? " destacada" : ""));
+    det.open = f.proxima ? true : !!(f.ultima && !hayProxima);
 
     var sum = el("summary");
 
     var txt = el("div","fecha-txt");
+    if(f.nro) txt.appendChild(el("span","nro", "Fecha " + f.nro));
     txt.appendChild(el("div","circuito", f.circuito));
     if(f.sede) txt.appendChild(el("div","sede", f.sede));
     sum.appendChild(txt);
 
     var cuerpo = el("div","cuerpo");
 
-    /* Fila del fin de semana. No suma al contador: no es parte de los
-       análisis por evento, es material suelto de la fecha. */
-    if(f.extras && f.extras.length){
-      var filaX = el("div","sesion");
-      filaX.appendChild(el("div","sesion-nom","Fin de semana"));
-      var lx = el("div","enlaces");
-      f.extras.forEach(function(x){
+    /* Fila del fin de semana. Siempre muestra los tres casilleros.
+       No suma al contador: no son análisis por evento. */
+    var filaX = el("div","sesion");
+    filaX.appendChild(el("div","sesion-nom","Fin de semana"));
+    var lx = el("div","enlaces");
+    MATERIAL.forEach(function(m){
+      var u = f.finde && f.finde[m.clave];
+      if(u){
         var a = el("a","chip");
-        a.href = direccion(x.u);
+        a.href = direccion(u);
         a.target = "_blank";
         a.rel = "noopener";
         a.appendChild(el("span","dot extra"));
-        a.appendChild(document.createTextNode(x.t));
+        a.appendChild(document.createTextNode(m.t));
         lx.appendChild(a);
-      });
-      filaX.appendChild(lx);
-      cuerpo.appendChild(filaX);
-    }
+      } else {
+        var sp = el("span","chip falta");
+        sp.setAttribute("aria-disabled","true");
+        sp.title = "Todavía sin cargar";
+        sp.appendChild(el("span","dot falta"));
+        sp.appendChild(document.createTextNode(m.t));
+        lx.appendChild(sp);
+      }
+    });
+    filaX.appendChild(lx);
+    cuerpo.appendChild(filaX);
 
     (f.eventos || []).forEach(function(ev){
       var fila = el("div","sesion");
@@ -559,7 +660,8 @@ var FECHAS = [
     });
 
     var meta = el("div","meta");
-    if(f.ultima) meta.appendChild(el("span","pill","Última fecha"));
+    if(f.proxima)     meta.appendChild(el("span","pill proxima","Próxima"));
+    else if(f.ultima) meta.appendChild(el("span","pill","Última fecha"));
     if(f.cuando) meta.appendChild(el("span","cuando", f.cuando));
     meta.appendChild(el("span","avance", hechos + "/" + totales));
     sum.appendChild(meta);

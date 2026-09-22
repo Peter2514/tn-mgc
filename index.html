@@ -134,6 +134,7 @@
   .dot.ritmo{background:var(--amber);}
   .dot.evo{background:var(--green);}
   .dot.falta{background:transparent;border:1px dashed var(--apagado);}
+  .dot.extra{background:var(--muted);}
 
   /* ---------- Fechas ---------- */
   .fechas{display:flex;flex-direction:column;gap:10px;}
@@ -353,6 +354,12 @@ var FECHAS = [
     sede: "Autódromo Ciudad de Río Cuarto · 3.230 km",
     cuando: "Fecha 9 · 20/09/26",
     ultima: true,
+    /* Material del fin de semana que no es CPP / Ritmo / Evolución:
+       cronograma, adquisición de datos, lo que haga falta. */
+    extras: [
+      { t:"Cronograma",          u:"p:/Cronograma_TN_Clase3_RioCuarto_AZUL.png" },
+      { t:"Adquisición de datos", u:"p:/Valle_Lambiris_RioCuarto_3.html" }
+    ],
     eventos: [
       { n:"1er Entrenamiento", primera:true,
         cpp:"p:/CPP_TN_C3_ENT1_RioCuarto.html" },
@@ -372,7 +379,7 @@ var FECHAS = [
       { n:"Final",
         cpp:"p:/CPP_TN_C3_Final_RioCuarto.html",
         ritmo:"p:/Ritmo_TN_C3_Final_RioCuarto.html",
-        evo:"/rio-cuarto/evolucion-general" }
+        evo:"p:/Evolucion_TN_C3_RioCuarto.html" }
     ]
   },
   {
@@ -495,6 +502,25 @@ var FECHAS = [
     sum.appendChild(txt);
 
     var cuerpo = el("div","cuerpo");
+
+    /* Fila del fin de semana. No suma al contador: no es parte de los
+       análisis por evento, es material suelto de la fecha. */
+    if(f.extras && f.extras.length){
+      var filaX = el("div","sesion");
+      filaX.appendChild(el("div","sesion-nom","Fin de semana"));
+      var lx = el("div","enlaces");
+      f.extras.forEach(function(x){
+        var a = el("a","chip");
+        a.href = direccion(x.u);
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.appendChild(el("span","dot extra"));
+        a.appendChild(document.createTextNode(x.t));
+        lx.appendChild(a);
+      });
+      filaX.appendChild(lx);
+      cuerpo.appendChild(filaX);
+    }
 
     (f.eventos || []).forEach(function(ev){
       var fila = el("div","sesion");

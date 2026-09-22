@@ -1,4 +1,5 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="color-scheme" content="light"><title>Evolución — TN Clase 3 · Río Cuarto</title><style>
+:root{color-scheme:light only}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{font-family:Arial,sans-serif;background:#EFEFEC;color:#111;font-size:12px;display:flex;flex-direction:column}
@@ -205,13 +206,26 @@ function active(){
     return asg.filter(Boolean).map(o=>({key:o.a,label:'#'+NUM[o.a]+' '+o.a,sub:MARCA[o.a]+' '+MODELO[o.a],
       color:o.color,equipo:!!EQUIPO[o.a],v:SES.map((_,si)=>val(o.a,si))}));}
   return MARCAS.filter(m=>visM[m]).map(m=>({key:m,label:m,sub:MCOUNT[m]+' autos',color:MCOLOR[m],v:SES.map((_,si)=>mval(m,si)),cnt:SES.map((_,si)=>mcount(m,si))}));}
+// Color del numerito: el mismo del piloto pero oscurecido hasta que se lea sobre
+// blanco (contraste >= 4.5:1). Sin halo ni borde: texto liso, como en el Ritmo.
+const CACHE_LEG={};
+function legible(hex){
+  if(CACHE_LEG[hex])return CACHE_LEG[hex];
+  let r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  const lum=(R,G,B)=>{const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);};
+    return 0.2126*f(R)+0.7152*f(G)+0.0722*f(B);};
+  let k=1;
+  while(k>0.3 && (1.05)/(lum(r*k,g*k,b*k)+0.05)<4.5) k-=0.05;
+  const h2='#'+[r*k,g*k,b*k].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+  CACHE_LEG[hex]=h2;return h2;}
 function draw(){
   const act=active();cards(act);
   const svg=document.getElementById('chart'),W=svg.clientWidth,H=svg.clientHeight;
   const L=74,R=32,T=26,B=42;
   let vs=[];act.forEach(a=>a.v.forEach(v=>{if(v!=null)vs.push(v);}));
   if(!vs.length){svg.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Arial" font-size="13" fill="#888">${vista==='marca'?'Elegí al menos una marca':'Elegí al menos un piloto'}</text>`;return;}
-  let h='';
+  // fondo propio: si el celular fuerza modo oscuro, no puede invertir un rect con fill
+  let h=`<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`;
   let lo=Math.min(...vs),hi=Math.max(...vs);
   let span=Math.max(hi-lo,mode<0?0.2:0.05);
   const sv=[...vs].sort((a,b)=>a-b),mid=zoom>0?sv[Math.floor(sv.length/2)]:(hi+lo)/2;
@@ -234,7 +248,7 @@ function draw(){
     const cand=[p[1]-9,p[1]+20,p[1]-23,p[1]+34];let ly=cand.find(q=>!u.some(z=>Math.abs(z-q)<13));
     if(ly===undefined)ly=cand[0];u.push(ly);
     const last=si===SES.length-1;
-    h+=`<text x="${p[0]+(last?-10:10)}" y="${ly}" text-anchor="${last?'end':'start'}" font-family="Arial" font-weight="700" font-size="11" fill="${c}" paint-order="stroke" stroke="#fff" stroke-width="3">${fmt(p[2])}</text>`;});
+    h+=`<text x="${p[0]+(last?-8:8)}" y="${ly}" text-anchor="${last?'end':'start'}" font-family="Arial" font-weight="700" font-size="11" fill="${legible(c)}">${fmt(p[2])}</text>`;});
   h+='</g>';svg.innerHTML=h;}
 function cards(act){
   const box=document.getElementById('cards');

@@ -23,10 +23,14 @@
   ÍNDICE — TN CLASE 3 · MG-C PERGAMINO · 2026
   =========================================================
   CÓMO FUNCIONA
-  Cada evento del fin de semana (entrenamientos, clasificación, series y final)
-  muestra siempre los tres análisis: CPP, Ritmo y Evolución. El primer evento
-  no lleva Evolución, porque no hay nada anterior contra qué compararlo: para
-  ese se pone  primera:true .
+  Cada evento del fin de semana muestra los análisis que le corresponden:
+
+      Entrenamientos y clasificación → CPP y Evolución
+      Series y final                 → CPP, Ritmo y Evolución
+
+  El Ritmo aparece solo en los eventos cuyo nombre dice "Serie" o "Final".
+  Y el primer evento del fin de semana no lleva Evolución, porque no hay nada
+  anterior contra qué compararlo: a ese se le pone  primera:true .
 
   Lo que todavía no está hecho aparece en gris y no se puede tocar. Así el
   índice te sirve también de checklist de lo que falta del fin de semana.
@@ -441,7 +445,9 @@ var FECHAS = [
       { n:"2do Entrenamiento",
         cpp:"p:/CPP_TN_C3_ENT2_SanMartin.html",
         evo:"p:/Evolucion_TN_C3_SanMartin.html" },
-      { n:"Clasificación" },
+      { n:"Clasificación",
+        cpp:"p:/CPP_TN_C3_Clasificacion_SanMartin.html",
+        evo:"p:/Evolucion_TN_C3_SanMartin.html" },
       { n:"1era Serie" },
       { n:"2da Serie" },
       { n:"3era Serie" },
@@ -681,6 +687,10 @@ var FECHAS = [
         /* el primer evento del fin de semana no lleva Evolución:
            no hay actividad anterior contra qué compararlo */
         if(tipo.clave === "evo" && ev.primera) return;
+
+        /* el Ritmo sólo tiene sentido en carrera: series y final.
+           En entrenamientos y clasificación no se muestra. */
+        if(tipo.clave === "ritmo" && !/serie|final/i.test(ev.n)) return;
 
         totales++;
         var u = ev[tipo.clave];

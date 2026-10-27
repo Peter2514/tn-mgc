@@ -68,8 +68,8 @@
   Dos etiquetas, y una sola por fecha:
       proxima:true → la carrera que viene, todavía no corrió. Se abre sola.
       ultima:true  → la última que SÍ corrió.
-  Cuando Mendoza termine, le cambiás  proxima:true  por  ultima:true  y le
-  sacás el  ultima:true  a Río Cuarto.
+  Cuando Concordia termine, le cambiás  proxima:true  por  ultima:true  y le
+  sacás el  ultima:true  a Mendoza.
   =========================================================
 -->
 
@@ -429,11 +429,30 @@ var PAGES = "https://peter2514.github.io/tn-mgc";
 
 var FECHAS = [
   {
+    circuito: "Concordia",
+    nro: 11,
+    sede: "Autódromo Ciudad de Concordia · Entre Ríos",
+    cuando: "",
+    proxima: true,
+    finde: {
+      precarrera: "p:/Precarrera-concordia-2026.html"
+    },
+    eventos: [
+      { n:"1er Entrenamiento", primera:true },
+      { n:"2do Entrenamiento" },
+      { n:"Clasificación" },
+      { n:"1era Serie" },
+      { n:"2da Serie" },
+      { n:"3era Serie" },
+      { n:"Final" }
+    ]
+  },
+  {
     circuito: "Mendoza",
     nro: 10,
     sede: "Autódromo Ciudad de San Martín · Mendoza · 4.168 m",
     cuando: "10-11/10/26",
-    proxima: true,
+    ultima: true,
     finde: {
       cronograma: "p:/Cronograma_Mendoza.html",
       precarrera: "p:/Precarrera_SanMartin_MGC.html",
@@ -464,21 +483,6 @@ var FECHAS = [
     ]
   },
   {
-    circuito: "Concordia",
-    nro: 11,
-    sede: "Entre Ríos",
-    cuando: "",
-    eventos: [
-      { n:"1er Entrenamiento", primera:true },
-      { n:"2do Entrenamiento" },
-      { n:"Clasificación" },
-      { n:"1era Serie" },
-      { n:"2da Serie" },
-      { n:"3era Serie" },
-      { n:"Final" }
-    ]
-  },
-  {
     circuito: "Viedma",
     nro: 12,
     sede: "Río Negro",
@@ -498,7 +502,6 @@ var FECHAS = [
     nro: 9,
     sede: "Autódromo Ciudad de Río Cuarto · 3.230 km",
     cuando: "20/09/26",
-    ultima: true,
     finde: {
       cronograma: "p:/Cronograma_TN_Clase3_RioCuarto_AZUL.png",
       precarrera: "p:/Valle_Lambiris_RioCuarto_3.html"

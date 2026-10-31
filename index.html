@@ -29,6 +29,8 @@
       Series y final                 → CPP, Ritmo y Evolución
 
   El Ritmo aparece solo en los eventos cuyo nombre dice "Serie" o "Final".
+  Si un evento necesita otra combinación, se le pone  solo:["cpp","evo"]  con
+  los que quieras y manda esa lista, ignorando las reglas de arriba.
   Y el primer evento del fin de semana no lleva Evolución, porque no hay nada
   anterior contra qué compararlo: a ese se le pone  primera:true .
 
@@ -432,11 +434,31 @@ var FECHAS = [
     circuito: "Concordia",
     nro: 11,
     sede: "Autódromo Ciudad de Concordia · Entre Ríos",
-    cuando: "",
+    cuando: "31/10/26",
     proxima: true,
     finde: {
       precarrera: "p:/Precarrera-concordia-2026.html"
     },
+    eventos: [
+      { n:"1er Entrenamiento", primera:true,
+        cpp:"p:/CPP_TN_C3_ENT1_Concordia.html" },
+      { n:"2do Entrenamiento",
+        cpp:"p:/CPP_TN_C3_ENT2_Concordia.html",
+        evo:"p:/Evolucion_TN_C3_Concordia.html" },
+      { n:"Clasificación",
+        cpp:"p:/CPP_TN_C3_Clasificacion_Concordia.html",
+        evo:"p:/Evolucion_TN_C3_Concordia.html" },
+      { n:"1era Serie" },
+      { n:"2da Serie" },
+      { n:"3era Serie" },
+      { n:"Final" }
+    ]
+  },
+  {
+    circuito: "Viedma",
+    nro: 12,
+    sede: "Río Negro",
+    cuando: "",
     eventos: [
       { n:"1er Entrenamiento", primera:true },
       { n:"2do Entrenamiento" },
@@ -467,34 +489,21 @@ var FECHAS = [
       { n:"Clasificación",
         cpp:"p:/CPP_TN_C3_Clasificacion_SanMartin.html",
         evo:"p:/Evolucion_TN_C3_SanMartin.html" },
-      { n:"1era Serie",
+      { n:"1era Serie", solo:["cpp","evo"],
         cpp:"p:/CPP_TN_C3_Serie1_SanMartin.html",
         evo:"p:/Evolucion_TN_C3_SanMartin.html" },
-      { n:"2da Serie",
+      { n:"2da Serie", solo:["cpp","evo"],
         cpp:"p:/CPP_TN_C3_Serie2_SanMartin.html",
         evo:"p:/Evolucion_TN_C3_SanMartin.html" },
-      { n:"3era Serie",
+      { n:"3era Serie", solo:["cpp","evo"],
         cpp:"p:/CPP_TN_C3_Serie3_SanMartin.html",
         evo:"p:/Evolucion_TN_C3_SanMartin.html" },
+      { n:"Mix de Series", solo:["cpp"],
+        cpp:"p:/CPP_TN_C3_Series_SanMartin.html" },
       { n:"Final",
         cpp:"p:/CPP_TN_C3_Final_SanMartin.html",
         ritmo:"p:/Ritmo_TN_C3_Final_SanMartin.html",
         evo:"p:/Evolucion_TN_C3_SanMartin.html" }
-    ]
-  },
-  {
-    circuito: "Viedma",
-    nro: 12,
-    sede: "Río Negro",
-    cuando: "",
-    eventos: [
-      { n:"1er Entrenamiento", primera:true },
-      { n:"2do Entrenamiento" },
-      { n:"Clasificación" },
-      { n:"1era Serie" },
-      { n:"2da Serie" },
-      { n:"3era Serie" },
-      { n:"Final" }
     ]
   },
   {
@@ -696,13 +705,18 @@ var FECHAS = [
 
       var enlaces = el("div","enlaces");
       TIPOS.forEach(function(tipo){
-        /* el primer evento del fin de semana no lleva Evolución:
-           no hay actividad anterior contra qué compararlo */
-        if(tipo.clave === "evo" && ev.primera) return;
+        if(ev.solo){
+          /* el evento fija a mano qué análisis muestra */
+          if(ev.solo.indexOf(tipo.clave) === -1) return;
+        } else {
+          /* el primer evento del fin de semana no lleva Evolución:
+             no hay actividad anterior contra qué compararlo */
+          if(tipo.clave === "evo" && ev.primera) return;
 
-        /* el Ritmo sólo tiene sentido en carrera: series y final.
-           En entrenamientos y clasificación no se muestra. */
-        if(tipo.clave === "ritmo" && !/serie|final/i.test(ev.n)) return;
+          /* el Ritmo sólo tiene sentido en carrera: series y final.
+             En entrenamientos y clasificación no se muestra. */
+          if(tipo.clave === "ritmo" && !/serie|final/i.test(ev.n)) return;
+        }
 
         totales++;
         var u = ev[tipo.clave];

@@ -70,8 +70,9 @@
   Dos etiquetas, y una sola por fecha:
       proxima:true → la carrera que viene, todavía no corrió. Se abre sola.
       ultima:true  → la última que SÍ corrió.
-  Cuando Concordia termine, le cambiás  proxima:true  por  ultima:true  y le
-  sacás el  ultima:true  a Mendoza.
+  Hoy Concordia tiene  ultima:true  (ya corrió). Cuando se sepa la fecha de
+  Viedma, a Viedma le ponés  proxima:true  y a Concordia le dejás el
+  ultima:true  hasta que Viedma corra.
   =========================================================
 -->
 
@@ -435,7 +436,7 @@ var FECHAS = [
     nro: 11,
     sede: "Autódromo Ciudad de Concordia · Entre Ríos",
     cuando: "31/10/26",
-    proxima: true,
+    ultima: true,
     finde: {
       precarrera: "p:/Precarrera-concordia-2026.html"
     },
@@ -448,10 +449,24 @@ var FECHAS = [
       { n:"Clasificación",
         cpp:"p:/CPP_TN_C3_Clasificacion_Concordia.html",
         evo:"p:/Evolucion_TN_C3_Concordia.html" },
-      { n:"1era Serie" },
-      { n:"2da Serie" },
-      { n:"3era Serie" },
-      { n:"Final" }
+      { n:"1era Serie",
+        cpp:"p:/CPP_TN_C3_Serie1_Concordia.html",
+        ritmo:"p:/Ritmo_TN_C3_S1_Concordia.html",
+        evo:"p:/Evolucion_TN_C3_Concordia.html" },
+      { n:"2da Serie",
+        cpp:"p:/CPP_TN_C3_Serie2_Concordia.html",
+        ritmo:"p:/Ritmo_TN_C3_S2_Concordia.html",
+        evo:"p:/Evolucion_TN_C3_Concordia.html" },
+      { n:"3era Serie",
+        cpp:"p:/CPP_TN_C3_Serie3_Concordia.html",
+        ritmo:"p:/Ritmo_TN_C3_S3_Concordia.html",
+        evo:"p:/Evolucion_TN_C3_Concordia.html" },
+      { n:"Mix de Series", solo:["cpp"],
+        cpp:"p:/CPP_TN_C3_Series_Concordia.html" },
+      { n:"Final",
+        cpp:"p:/CPP_TN_C3_Final_Concordia.html",
+        ritmo:"p:/Ritmo_TN_C3_Final_Concordia.html",
+        evo:"p:/Evolucion_TN_C3_Concordia.html" }
     ]
   },
   {
@@ -474,7 +489,6 @@ var FECHAS = [
     nro: 10,
     sede: "Autódromo Ciudad de San Martín · Mendoza · 4.168 m",
     cuando: "10-11/10/26",
-    ultima: true,
     finde: {
       cronograma: "p:/Cronograma_Mendoza.html",
       precarrera: "p:/Precarrera_SanMartin_MGC.html",

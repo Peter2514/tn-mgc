@@ -61,8 +61,11 @@
       finde: {
         cronograma: "p:/Cronograma_Mendoza.png",
         precarrera: "p:/PreCarrera_Mendoza.html",
-        sectores:   "p:/Sectores_Mendoza.png"
+        sectores:   "p:/Sectores_Mendoza.png",
+        video:      "p:/Video_Pernia_Viedma_2024.mp4"
       },
+
+  El casillero  video:  (Video a bordo) es opcional: si no lo cargás, no aparece.
 
   El  nro:  es el número de fecha del campeonato y se muestra arriba del
   nombre del circuito. El  cuando:  es sólo el día, sin el número.
@@ -477,7 +480,8 @@ var FECHAS = [
     proxima: true,
     finde: {
       cronograma: "p:/cronograma-viedma-mgc.html",
-      precarrera: "p:/Precarrera-viedma-2026.html"
+      precarrera: "p:/Precarrera-viedma-2026.html",
+      video:      "p:/Video_Pernia_Viedma_2024.mp4"
     },
     eventos: [
       { n:"1er Entrenamiento", primera:true },
@@ -648,7 +652,8 @@ var FECHAS = [
   var MATERIAL = [
     { clave:"cronograma", t:"Cronograma" },
     { clave:"precarrera", t:"Pre Carrera" },
-    { clave:"sectores",   t:"Sectores Cronometrados" }
+    { clave:"sectores",   t:"Sectores Cronometrados" },
+    { clave:"video",      t:"Video a bordo", opcional:true }   /* sólo aparece si está cargado */
   ];
 
   var TIPOS = [
@@ -697,6 +702,7 @@ var FECHAS = [
     var lx = el("div","enlaces");
     MATERIAL.forEach(function(m){
       var u = f.finde && f.finde[m.clave];
+      if(!u && m.opcional) return;
       if(u){
         var a = el("a","chip");
         a.href = direccion(u);

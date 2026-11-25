@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sectores cronometrados · Viedma</title>
+<title>Sectores y marchas · Viedma</title>
 <style>
 /*
 VOICE: hoja de boxes, misma línea que las precarreras (negro, rojo, sectores en color)
@@ -64,6 +64,17 @@ svg.focus .badge{opacity:.35}svg.focus .badge.on{opacity:1}
   font-size:13px}
 :root[data-theme="light"] .sc[data-s="5"] .n i{color:#fff}
 .sc .d{color:var(--ink-2);font-size:13.5px;margin-top:6px}
+.gearrow{display:grid;grid-template-columns:150px minmax(0,1fr) 48px;gap:16px;align-items:center;margin-top:16px}
+.gbig{text-align:center}.gbig span{display:block;font-size:12px;color:var(--muted)}
+.gbig b{display:block;font-size:56px;line-height:1;font-weight:800;font-variant-numeric:tabular-nums}
+.gbig em{display:block;height:18px;font-style:normal;font-size:13px;font-weight:800}
+#gsc{transition:transform .18s}
+.gkey{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:10px}.gkey i{font-style:normal;font-size:11px;font-weight:800;color:#111;border-radius:5px;padding:1px 6px}
+.gbig small{font-size:12px;color:var(--ink-2)}
+.gchart{position:relative;height:130px}.gchart svg{position:absolute;inset:0;width:100%;height:100%}
+.play{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:14px;cursor:pointer}
+.play:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+@media(max-width:560px){.gearrow{grid-template-columns:80px minmax(0,1fr)}.gbig b{font-size:40px}.play{grid-column:1/-1;justify-self:center}}
 .foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;color:var(--muted);font-size:13px}
 @media(max-width:860px){.legend{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:560px){header{flex-wrap:wrap}.circ{width:100%;max-width:none}.legend{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -75,8 +86,8 @@ svg.focus .badge{opacity:.35}svg.focus .badge.on{opacity:1}
 <div class="wrap">
   <header>
     <div class="ht">
-      <h1>Sectores <b>cronometrados</b></h1>
-      <p>Trazado dividido en 5 parciales · tocá un sector para resaltarlo</p>
+      <h1>Sectores y <b>marchas</b></h1>
+      <p>5 parciales y uso de la caja por curva · tocá un sector para resaltarlo</p>
     </div>
     <div class="circ">Autódromo de Viedma</div>
   </header>
@@ -88,10 +99,25 @@ svg.focus .badge{opacity:.35}svg.focus .badge.on{opacity:1}
       <g id="cuts"></g>
       <g id="flag"></g>
       <g id="badges"></g>
-      <g id="car"><circle id="halo" r="20" fill="none" stroke-width="4" opacity=".9"/><circle r="11" fill="#fff" stroke="#111" stroke-width="4"/></g>
+      <g id="car">
+        <g id="carbody"><g transform="scale(1.45)">
+          <rect x="-15" y="-11" width="8" height="4.5" rx="1.5" fill="#111"/><rect x="-15" y="6.5" width="8" height="4.5" rx="1.5" fill="#111"/>
+          <rect x="7" y="-10.5" width="7" height="4" rx="1.5" fill="#111"/><rect x="7" y="6.5" width="7" height="4" rx="1.5" fill="#111"/>
+          <path d="M-18,-8 Q-18,-9.5 -16,-9.5 L10,-8.5 Q19,-7 20,0 Q19,7 10,8.5 L-16,9.5 Q-18,9.5 -18,8 Z" fill="#f4f4f2" stroke="#111" stroke-width="1.4"/>
+          <path d="M-3,-6 L6,-5 Q9,0 6,5 L-3,6 Q-5,0 -3,-6 Z" fill="#0d1b3e" opacity=".85"/>
+          <rect x="-18" y="-1.6" width="38" height="3.2" fill="#e2231a"/>
+          <rect x="-20" y="-9" width="3" height="18" rx="1" fill="#111"/>
+        </g></g>
+        <g id="gbub" transform="translate(0,-40)"><g id="gsc"><circle r="15" fill="#7b61ff" stroke="#fff" stroke-width="3" id="halo"/><text id="gtx" text-anchor="middle" dominant-baseline="central" y="1" fill="#111" font-weight="800" font-size="17">6</text></g><text id="garr" x="24" y="1" dominant-baseline="central" font-size="18" font-weight="800" opacity="0"></text></g>
+      </g>
     </svg>
   </div>
 
+  <div class="gearrow card">
+    <div class="gbig"><span>Marcha</span><b id="gbig">6</b><em id="gdir"></em><small id="gsec">Sector 1</small><div class="gkey" id="gkey"></div></div>
+    <div class="gchart"><svg id="gc" preserveAspectRatio="none"></svg></div>
+    <button class="play" id="play" aria-label="Pausar">❚❚</button>
+  </div>
   <div class="legend" id="leg"></div>
   <div class="foot"><span>Sentido de giro: S1 → S2 → S3 → S4 → S5 → línea</span><span>MG-C · Pedro Viglietti</span></div>
 </div>
@@ -143,20 +169,80 @@ function pick(n){
 leg.addEventListener('click',e=>{const b=e.target.closest('.sc');if(b)pick(+b.dataset.s)});
 m.addEventListener('click',e=>{const t=e.target.closest('[data-s]');pick(t?+t.dataset.s:cur)});
 
-/* auto recorriendo la vuelta, toma el color del sector */
-const car=document.getElementById('car'),halo=document.getElementById('halo');
-const lens=paths.map(p=>p.getTotalLength()),tot=lens.reduce((a,b)=>a+b,0);
-const lapMs=12000;let t0=null;
+/* auto recorriendo la vuelta con la caja cantada por el piloto */
+const fp=el('path',{d:full,fill:'none'},m);fp.style.display='none';fp.style.display='';fp.setAttribute('stroke','none');
+const L=fp.getTotalLength(),DS=3,NP=Math.floor(L/DS),PTS=[];for(let i=0;i<=NP;i++)PTS.push(fp.getPointAtLength(i*DS));
+const near=(x,y)=>{let bi=0,bd=1e9;PTS.forEach((p,i)=>{const d=(p.x-x)**2+(p.y-y)**2;if(d<bd){bd=d;bi=i}});return bi*DS};
+/* [x,y del punto de cambio, marcha] en orden de marcha desde la línea */
+const GE=[
+ [230,65,4],[340,66,5],[470,68,6],                               /* recta principal */
+ [630,72,5],[750,250,6],                                         /* curva 1: baja una, la hace en 5ª */
+ [742,370,5],[742,395,4],[741,420,3],[580,395,4],[586,300,5],    /* curva 2 en 3ª */
+ [588,262,4],[585,238,3],[470,174,4],                            /* curva 3 en 3ª */
+ [345,173,3],[312,173,2],[272,268,3],[325,336,4],[380,405,5],    /* curva 4 en 2ª */
+ [420,447,4],[428,458,3],[436,472,2],[370,532,3],[310,532,4],[245,530,5], /* la chiquita en 2ª */
+ [52,330,6],                                                     /* curvón en 5ª, sale en 6ª */
+ [52,170,5],[52,150,4],[52,130,3],[52,112,2],[52,96,1],          /* baja 5 a primera: curva 0 */
+ [100,20,2],[150,59,3]
+].map(e=>({s:near(e[0],e[1]),g:e[2]})).sort((a,b)=>a.s-b.s);
+const gearAt=s=>{let g=GE[GE.length-1].g;for(const e of GE){if(e.s<=s)g=e.g;else break}return g};
+/* velocidad estimada por marcha (no es la vuelta real) */
+const V=[0,55,80,105,130,152,172],AUP=70,ADN=320;
+const T=[];let v=V[gearAt(0)],t=0;
+for(let lap=0;lap<2;lap++){let s0=0;t=0;T.length=0;
+  while(s0<L){const g=gearAt(s0),vt=V[g];v=v<vt?Math.min(vt,v+AUP/120):Math.max(vt,v-ADN/120);T.push([t,s0,g]);s0+=v/120;t+=1/120}}
+const LAP=t;
+const secStart=[];{let acc=0;const lens0=paths.map(p=>p.getTotalLength());lens0.forEach(l=>{secStart.push(acc);acc+=l})}
+const secOf=s=>{let i=0;while(i<secStart.length-1&&s>=secStart[i+1])i++;return i};
+const secT=secStart.map(ss=>{const r=T.find(x=>x[1]>=ss);return r?r[0]:0});
+
+/* gráfico de marchas en el tiempo */
+const gc=document.getElementById('gc');
+function drawChart(){const W=gc.clientWidth,H=gc.clientHeight;if(!W)return;const l=26,r=6,tp=8,bt=18;
+  const X=tt=>l+(W-l-r)*tt/LAP,Y=g=>tp+(H-tp-bt)*(6-g)/5;
+  let h='';
+  secT.forEach((st,i)=>{const en=i<secT.length-1?secT[i+1]:LAP;h+='<rect x="'+X(st)+'" y="'+tp+'" width="'+(X(en)-X(st))+'" height="'+(H-tp-bt)+'" style="fill:var('+S[i].c+')" opacity=".10"/><text x="'+((X(st)+X(en))/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="11" style="fill:var(--muted)">S'+(i+1)+'</text>'});
+  for(let g=1;g<=6;g++)h+='<line x1="'+l+'" x2="'+(W-r)+'" y1="'+Y(g)+'" y2="'+Y(g)+'" style="stroke:var(--line)"/><text x="'+(l-8)+'" y="'+(Y(g)+4)+'" text-anchor="end" font-size="11" style="fill:var(--muted)">'+g+'</text>';
+  let d='',pg=null;T.forEach(([tt,,g],i)=>{if(i%6&&g===pg)return;const x=X(tt);d+=(d?(g!==pg?' L'+x+','+Y(pg)+' L':' L'):'M')+x+','+Y(g);pg=g});
+  d+=' L'+X(LAP)+','+Y(pg);
+  h+='<path d="'+d+'" fill="none" style="stroke:var(--ink)" stroke-width="2"/><line id="gcur" x1="0" x2="0" y1="'+tp+'" y2="'+(H-bt)+'" style="stroke:var(--red)" stroke-width="2"/>';
+  gc.innerHTML=h;gc._X=X}
+const gro=new ResizeObserver(drawChart);gro.observe(gc);drawChart();
+
+const GC=['','#ff3b30','#ff8a00','#ffd60a','#34c759','#32ade6','#7b61ff'],UP='#3ce06e',DN='#ff4d4d';
+document.getElementById('gkey').innerHTML=GC.slice(1).map((c,i)=>'<i style="background:'+c+'">'+(i+1)+'</i>').join('');
+const gsc=document.getElementById('gsc'),garr=document.getElementById('garr'),gdir=document.getElementById('gdir');let flashT=null;
+const car=document.getElementById('car'),body=document.getElementById('carbody'),halo=document.getElementById('halo'),
+      gtx=document.getElementById('gtx'),gbig=document.getElementById('gbig'),gsec=document.getElementById('gsec');
+const SPD=0.6;let t0=null,paused=false,tp=0,lastG=0,idx=0;
+function place(tt){
+  while(idx>0&&T[idx][0]>tt)idx=0;
+  while(idx<T.length-1&&T[idx+1][0]<=tt)idx++;
+  const [,s0,g]=T[idx],p=fp.getPointAtLength(s0),q=fp.getPointAtLength(Math.min(L,s0+4)),p0=fp.getPointAtLength(Math.max(0,s0-4));
+  const ang=Math.atan2(q.y-p0.y,q.x-p0.x)*180/Math.PI,si=secOf(s0),col=css(S[si].c)||'#fff';
+  car.setAttribute('transform','translate('+p.x.toFixed(1)+','+p.y.toFixed(1)+')');
+  body.setAttribute('transform','rotate('+ang.toFixed(1)+')');
+  if(g!==lastG){
+    const dir=lastG?(g<lastG?-1:1):0;
+    gtx.textContent=g;gbig.textContent=g;halo.setAttribute('fill',GC[g]);gbig.style.color=GC[g];
+    if(dir){const c=dir<0?DN:UP;
+      garr.textContent=dir<0?'▼':'▲';garr.setAttribute('fill',c);garr.setAttribute('opacity','1');
+      halo.setAttribute('stroke',c);gsc.setAttribute('transform','scale(1.35)');
+      gdir.textContent=dir<0?'▼ Bajada':'▲ Subida';gdir.style.color=c;
+      clearTimeout(flashT);flashT=setTimeout(()=>{garr.setAttribute('opacity','0');halo.setAttribute('stroke','#fff');gsc.setAttribute('transform','');gdir.textContent=''},650)}
+    lastG=g}
+  gsec.textContent='Sector '+(si+1);
+  const cur=document.getElementById('gcur');if(cur&&gc._X){const x=gc._X(tt);cur.setAttribute('x1',x);cur.setAttribute('x2',x)}
+}
 function step(ts){
   if(t0===null)t0=ts;
-  let d=((ts-t0)%lapMs)/lapMs*tot,i=0;
-  while(i<lens.length-1&&d>lens[i]){d-=lens[i];i++}
-  const pt=paths[i].getPointAtLength(d);
-  car.setAttribute('transform','translate('+pt.x+','+pt.y+')');
-  halo.setAttribute('stroke',css(S[i].c)||'#fff');
-  requestAnimationFrame(step);
+  if(!paused)tp=((ts-t0)/1000*SPD)%LAP;else t0=ts-tp*1000/SPD;
+  place(tp);requestAnimationFrame(step);
 }
 requestAnimationFrame(step);
+const play=document.getElementById('play');
+play.addEventListener('click',()=>{paused=!paused;play.textContent=paused?'▶':'❚❚';play.setAttribute('aria-label',paused?'Seguir':'Pausar')});
+window.__LAP=LAP;
 }
 </script>
 </body>

@@ -489,6 +489,7 @@ var FECHAS = [
       cronograma: "p:/cronograma-viedma-mgc.html",
       precarrera: "p:/Precarrera-viedma-2026.html",
       sectores:   "p:/Sectores_Viedma.html",
+      sectoresTitulo: "Sectores y marchas",
       video:      "p:/Video_Pernia_Viedma_2024.mp4"
     },
     eventos: [
@@ -717,7 +718,7 @@ var FECHAS = [
         a.target = "_blank";
         a.rel = "noopener";
         a.appendChild(el("span","dot extra"));
-        a.appendChild(document.createTextNode(m.t));
+        a.appendChild(document.createTextNode((f.finde && f.finde[m.clave+"Titulo"]) || m.t));
         lx.appendChild(a);
       } else {
         var sp = el("span","chip falta");

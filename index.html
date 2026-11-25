@@ -366,14 +366,20 @@
 
   /* Colores por botón: fin de semana, un color cada uno; sesiones, un color por tipo
      (entrenamientos, clasificación, series y final) */
-  .chip{--k:#5BA9E0}
-  .k-cronograma{--k:#D4B04C}.k-precarrera{--k:#F26D5B}.k-sectores{--k:#9B7BFF}.k-video{--k:#2EC4C4}
-  .sesion.k-ent{--k:#4AA3FF}.sesion.k-cla{--k:#F08A24}.sesion.k-ser{--k:#2FBF71}.sesion.k-fin{--k:#E0559B}
-  .sesion[class*=" k-"] .chip{--k:inherit}
+  .chip{--k:#5BA9E0;--kb:rgba(91,169,224,.24);--kh:rgba(91,169,224,.40);--kl:rgba(91,169,224,.70);--kf:rgba(91,169,224,.38)}
+  .k-cronograma{--k:#D4B04C;--kb:rgba(212,176,76,.24);--kh:rgba(212,176,76,.40);--kl:rgba(212,176,76,.70);--kf:rgba(212,176,76,.38)}
+  .k-precarrera{--k:#F26D5B;--kb:rgba(242,109,91,.24);--kh:rgba(242,109,91,.40);--kl:rgba(242,109,91,.70);--kf:rgba(242,109,91,.38)}
+  .k-sectores{--k:#9B7BFF;--kb:rgba(155,123,255,.24);--kh:rgba(155,123,255,.40);--kl:rgba(155,123,255,.70);--kf:rgba(155,123,255,.38)}
+  .k-video{--k:#2EC4C4;--kb:rgba(46,196,196,.24);--kh:rgba(46,196,196,.40);--kl:rgba(46,196,196,.70);--kf:rgba(46,196,196,.38)}
+  .sesion.k-ent{--k:#4AA3FF;--kb:rgba(74,163,255,.24);--kh:rgba(74,163,255,.40);--kl:rgba(74,163,255,.70);--kf:rgba(74,163,255,.38)}
+  .sesion.k-cla{--k:#F08A24;--kb:rgba(240,138,36,.24);--kh:rgba(240,138,36,.40);--kl:rgba(240,138,36,.70);--kf:rgba(240,138,36,.38)}
+  .sesion.k-ser{--k:#2FBF71;--kb:rgba(47,191,113,.24);--kh:rgba(47,191,113,.40);--kl:rgba(47,191,113,.70);--kf:rgba(47,191,113,.38)}
+  .sesion.k-fin{--k:#E0559B;--kb:rgba(224,85,155,.24);--kh:rgba(224,85,155,.40);--kl:rgba(224,85,155,.70);--kf:rgba(224,85,155,.38)}
+  .sesion[class*=" k-"] .chip{--k:inherit;--kb:inherit;--kh:inherit;--kl:inherit;--kf:inherit}
   .sesion[class*=" k-"] .sesion-nom{color:var(--k)}
-  .chip:not(.falta){background:color-mix(in srgb,var(--k) 24%,var(--surface-2));border-color:color-mix(in srgb,var(--k) 70%,transparent)}
-  .chip:not(.falta):hover{background:color-mix(in srgb,var(--k) 40%,var(--surface-2));border-color:var(--k)}
-  .chip.falta,.chip.falta:hover{border-color:color-mix(in srgb,var(--k) 38%,transparent)}
+  .chip:not(.falta){background:linear-gradient(var(--kb),var(--kb)),var(--surface-2);border-color:var(--kl)}
+  .chip:not(.falta):hover{background:linear-gradient(var(--kh),var(--kh)),var(--surface-2);border-color:var(--k)}
+  .chip.falta,.chip.falta:hover{border-color:var(--kf)}
   .dot.extra{background:var(--k)}
 
   .pie{

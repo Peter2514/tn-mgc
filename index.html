@@ -363,6 +363,19 @@
   }
   .chip.falta:hover{background:transparent;border-color:#1D3852;}
 
+
+  /* Colores por botón: fin de semana, un color cada uno; sesiones, un color por tipo
+     (entrenamientos, clasificación, series y final) */
+  .chip{--k:#5BA9E0}
+  .k-cronograma{--k:#D4B04C}.k-precarrera{--k:#F26D5B}.k-sectores{--k:#9B7BFF}.k-video{--k:#2EC4C4}
+  .sesion.k-ent{--k:#4AA3FF}.sesion.k-cla{--k:#F08A24}.sesion.k-ser{--k:#2FBF71}.sesion.k-fin{--k:#E0559B}
+  .sesion[class*=" k-"] .chip{--k:inherit}
+  .sesion[class*=" k-"] .sesion-nom{color:var(--k)}
+  .chip:not(.falta){background:color-mix(in srgb,var(--k) 24%,var(--surface-2));border-color:color-mix(in srgb,var(--k) 70%,transparent)}
+  .chip:not(.falta):hover{background:color-mix(in srgb,var(--k) 40%,var(--surface-2));border-color:var(--k)}
+  .chip.falta,.chip.falta:hover{border-color:color-mix(in srgb,var(--k) 38%,transparent)}
+  .dot.extra{background:var(--k)}
+
   .pie{
     margin-top:18px;
     padding-top:12px;
@@ -713,7 +726,7 @@ var FECHAS = [
       var u = f.finde && f.finde[m.clave];
       if(!u && m.opcional) return;
       if(u){
-        var a = el("a","chip");
+        var a = el("a","chip k-" + m.clave);
         a.href = direccion(u);
         a.target = "_blank";
         a.rel = "noopener";
@@ -721,7 +734,7 @@ var FECHAS = [
         a.appendChild(document.createTextNode((f.finde && f.finde[m.clave+"Titulo"]) || m.t));
         lx.appendChild(a);
       } else {
-        var sp = el("span","chip falta");
+        var sp = el("span","chip falta k-" + m.clave);
         sp.setAttribute("aria-disabled","true");
         sp.title = "Todavía sin cargar";
         sp.appendChild(el("span","dot falta"));
@@ -733,7 +746,9 @@ var FECHAS = [
     cuerpo.appendChild(filaX);
 
     (f.eventos || []).forEach(function(ev){
-      var fila = el("div","sesion");
+      var tipoSes = /entren/i.test(ev.n) ? "k-ent" : /clasif/i.test(ev.n) ? "k-cla" :
+                    /serie/i.test(ev.n) ? "k-ser" : /final/i.test(ev.n) ? "k-fin" : "";
+      var fila = el("div","sesion " + tipoSes);
       fila.appendChild(el("div","sesion-nom", ev.n));
 
       var enlaces = el("div","enlaces");

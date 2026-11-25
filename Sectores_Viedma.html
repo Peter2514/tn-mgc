@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sectores cronometrados · Viedma</title>
+<style>
+/*
+VOICE: hoja de boxes, misma línea que las precarreras (negro, rojo, sectores en color)
+IDEA: la gráfica de sectores cronometrados del fin de semana
+PICTURE: el trazado grande, cada parcial en su color, con la línea y los cortes marcados
+COLOUR and TYPE: fondo carbón, acento rojo, colores de sector del dibujo original; system-ui
+LAYOUT: encabezado, mapa grande, fila de 5 tarjetas que encienden el sector
+*/
+:root{
+  --page:#09090a;--surface:#141416;--surface-2:#1c1c1f;--line:rgba(255,255,255,.08);
+  --ink:#fff;--ink-2:#b8b7b0;--muted:#84837d;--red:#e2231a;--asphalt:#2b2b2f;--curb:#3a3a3f;
+  --s1:#ff3b30;--s2:#4a6cff;--s3:#22b04b;--s4:#ffc21a;--s5:#e9e9e9;
+  --radius:14px;color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --page:#eeeeec;--surface:#fff;--surface-2:#f6f6f4;--line:rgba(0,0,0,.10);
+  --ink:#111114;--ink-2:#4b4b46;--muted:#77776f;--red:#c81a12;--asphalt:#d9d9d5;--curb:#c4c4bf;
+  --s1:#e0241b;--s2:#2f4fe0;--s3:#17923b;--s4:#e5a800;--s5:#111114;color-scheme:light;
+}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:radial-gradient(1200px 600px at 15% -10%,rgba(226,35,26,.10),transparent 60%),var(--page);
+  color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:clip}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 18px 50px}
+header{display:flex;align-items:center;gap:18px;padding:16px 20px 16px 24px;margin-bottom:18px;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--radius);position:relative;overflow:hidden}
+header::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--red)}
+header::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;
+  background:repeating-linear-gradient(135deg,rgba(128,128,128,.10) 0 8px,transparent 8px 16px)}
+.ht{flex:1;z-index:1}
+h1{margin:0;font-size:clamp(20px,3vw,28px);font-weight:800;line-height:1.1}
+h1 b{color:var(--red)}
+.ht p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+.circ{z-index:1;font-size:15px;font-weight:700;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:0 6px 24px rgba(0,0,0,.30)}
+:root[data-theme="light"] .card{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.map svg{display:block;width:100%;height:auto}
+.trk{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.base{stroke:var(--asphalt);stroke-width:30}
+.edge{stroke:var(--curb);stroke-width:34}
+.sec{stroke-width:11;transition:opacity .25s,stroke-width .25s;cursor:pointer}
+svg.focus .sec{opacity:.18}
+svg.focus .sec.on{opacity:1;stroke-width:15}
+.badge circle{fill:#111114;stroke-width:4}
+.badge text{font:800 22px system-ui,sans-serif;text-anchor:middle;dominant-baseline:central}
+.badge{cursor:pointer;transition:opacity .25s}
+svg.focus .badge{opacity:.35}svg.focus .badge.on{opacity:1}
+.cut{fill:var(--page);stroke:var(--ink);stroke-width:2.5}
+.lbl{font:700 13px system-ui,sans-serif;fill:var(--ink-2)}
+.legend{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:16px}
+.sc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 14px 14px;cursor:pointer;
+  text-align:left;font:inherit;color:inherit;transition:border-color .2s,transform .2s;position:relative;overflow:hidden;min-height:44px}
+.sc::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--c)}
+.sc:hover{transform:translateY(-2px)}
+.sc.on{border-color:var(--c)}
+.sc:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.sc .n{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;margin-top:4px}
+.sc .n i{width:28px;height:28px;border-radius:50%;background:#111114;border:3px solid var(--c);color:#fff!important;display:inline-grid;place-items:center;font-style:normal;
+  font-size:13px}
+:root[data-theme="light"] .sc[data-s="5"] .n i{color:#fff}
+.sc .d{color:var(--ink-2);font-size:13.5px;margin-top:6px}
+.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;color:var(--muted);font-size:13px}
+@media(max-width:860px){.legend{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){header{flex-wrap:wrap}.circ{width:100%;max-width:none}.legend{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{body{background:#fff}.card,.sc,header{box-shadow:none}}
+@media(prefers-reduced-motion:reduce){.sc{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="ht">
+      <h1>Sectores <b>cronometrados</b></h1>
+      <p>Trazado dividido en 5 parciales · tocá un sector para resaltarlo</p>
+    </div>
+    <div class="circ">Autódromo de Viedma</div>
+  </header>
+
+  <div class="card map">
+    <svg id="m" viewBox="-30 -30 830 600" role="img" aria-label="Trazado con los 5 sectores">
+      <g id="under"></g>
+      <g id="secs"></g>
+      <g id="cuts"></g>
+      <g id="flag"></g>
+      <g id="badges"></g>
+      <g id="car"><circle id="halo" r="20" fill="none" stroke-width="4" opacity=".9"/><circle r="11" fill="#fff" stroke="#111" stroke-width="4"/></g>
+    </svg>
+  </div>
+
+  <div class="legend" id="leg"></div>
+  <div class="foot"><span>Sentido de giro: S1 → S2 → S3 → S4 → S5 → línea</span><span>MG-C · Pedro Viglietti</span></div>
+</div>
+
+<script>
+{
+const S=[
+ {n:1,c:'--s1',p:'M184,64 L590,70 C700,75 752,120 752,200 C752,260 747,295 743,324',b:[400,32],d:'Recta principal y curva amplia a la derecha'},
+ {n:2,c:'--s2',p:'M743,324 C741,380 742,450 702,480 C670,503 610,502 585,472 C560,442 570,400 578,360 C585,320 590,262 585,230 C580,195 560,175 520,174 L425,174',b:[655,530],d:'Curvón bajo, subida y frenada al interior'},
+ {n:3,c:'--s3',p:'M425,174 L310,173 C270,174 250,200 252,225 C255,255 280,282 320,330 C360,380 410,435 430,465 C447,492 440,526 400,531 L332,533',b:[205,215],d:'Curva cerrada, ese en diagonal y salida baja'},
+ {n:4,c:'--s4',p:'M332,533 L235,530 C140,525 80,480 60,410 C50,370 50,300 51,200 L52,93',b:[135,440],d:'Curva larga a la derecha y recta opuesta'},
+ {n:5,c:'--s5',p:'M52,93 C52,50 50,20 75,10 C95,2 105,25 120,40 C140,58 160,64 184,64',b:[6,0],d:'Horquilla y vuelta a la línea'}
+];
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a,parent)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);parent&&parent.appendChild(e);return e};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const m=document.getElementById('m'),under=document.getElementById('under'),secs=document.getElementById('secs'),
+      cuts=document.getElementById('cuts'),badges=document.getElementById('badges'),leg=document.getElementById('leg');
+const full=S.map(s=>s.p).join(' ').replace(/ M[\d.,]+/g,' ');
+el('path',{d:full,class:'trk edge'},under);
+el('path',{d:full,class:'trk base'},under);
+
+const paths=[],bs=[];
+S.forEach(s=>{
+  const p=el('path',{d:s.p,class:'trk sec','data-s':s.n,style:'stroke:var('+s.c+')'},secs);paths.push(p);
+  const g=el('g',{class:'badge','data-s':s.n},badges);
+  el('circle',{cx:s.b[0],cy:s.b[1],r:20,style:'stroke:var('+s.c+')'},g);
+  const t=el('text',{x:s.b[0],y:s.b[1]+1,fill:'#fff'},g);t.textContent=s.n;bs.push(g);
+  const start=s.p.match(/M([\d.]+),([\d.]+)/);
+  if(s.n!==1)el('circle',{cx:start[1],cy:start[2],r:7,class:'cut'},cuts);
+});
+/* línea de largada/llegada (inicio de S1) */
+const fl=document.getElementById('flag');
+for(let i=0;i<4;i++)for(let j=0;j<2;j++)
+  el('rect',{x:180+j*6,y:47+i*8.5,width:6,height:8.5,fill:(i+j)%2?'#111':'#fff'},fl);
+el('rect',{x:180,y:47,width:12,height:34,fill:'none',stroke:'#111','stroke-width':1},fl);
+const lt=el('text',{x:212,y:105,class:'lbl'},fl);lt.textContent='Línea';
+
+leg.innerHTML=S.map(s=>`<button class="sc" data-s="${s.n}" style="--c:var(${s.c})"><div class="n"><i>${s.n}</i>Sector ${s.n}</div></button>`).join('');
+
+let cur=0;
+function pick(n){
+  cur=(cur===n)?0:n;
+  m.classList.toggle('focus',cur>0);
+  paths.forEach(p=>p.classList.toggle('on',+p.dataset.s===cur));
+  bs.forEach(b=>b.classList.toggle('on',+b.dataset.s===cur));
+  leg.querySelectorAll('.sc').forEach(b=>b.classList.toggle('on',+b.dataset.s===cur));
+}
+leg.addEventListener('click',e=>{const b=e.target.closest('.sc');if(b)pick(+b.dataset.s)});
+m.addEventListener('click',e=>{const t=e.target.closest('[data-s]');pick(t?+t.dataset.s:cur)});
+
+/* auto recorriendo la vuelta, toma el color del sector */
+const car=document.getElementById('car'),halo=document.getElementById('halo');
+const lens=paths.map(p=>p.getTotalLength()),tot=lens.reduce((a,b)=>a+b,0);
+const lapMs=12000;let t0=null;
+function step(ts){
+  if(t0===null)t0=ts;
+  let d=((ts-t0)%lapMs)/lapMs*tot,i=0;
+  while(i<lens.length-1&&d>lens[i]){d-=lens[i];i++}
+  const pt=paths[i].getPointAtLength(d);
+  car.setAttribute('transform','translate('+pt.x+','+pt.y+')');
+  halo.setAttribute('stroke',css(S[i].c)||'#fff');
+  requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+}
+</script>
+</body>
+</html>

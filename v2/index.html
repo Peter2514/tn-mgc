@@ -73,6 +73,8 @@
       },
 
   El casillero  video:  (Video a bordo) es opcional: si no lo cargás, no aparece.
+  El casillero  caja:  (Uso de la caja) aparece desde la fecha 12 (Viedma) en
+  adelante; en las fechas anteriores no se muestra.
 
   El  nro:  es el número de fecha del campeonato y se muestra arriba del
   nombre del circuito. El  cuando:  es sólo el día, sin el número.
@@ -370,6 +372,7 @@
   .k-cronograma{--k:#D4B04C;--kb:rgba(212,176,76,.24);--kh:rgba(212,176,76,.40);--kl:rgba(212,176,76,.70);--kf:rgba(212,176,76,.38)}
   .k-precarrera{--k:#F26D5B;--kb:rgba(242,109,91,.24);--kh:rgba(242,109,91,.40);--kl:rgba(242,109,91,.70);--kf:rgba(242,109,91,.38)}
   .k-sectores{--k:#9B7BFF;--kb:rgba(155,123,255,.24);--kh:rgba(155,123,255,.40);--kl:rgba(155,123,255,.70);--kf:rgba(155,123,255,.38)}
+  .k-caja{--k:#A6D23A;--kb:rgba(166,210,58,.22);--kh:rgba(166,210,58,.38);--kl:rgba(166,210,58,.70);--kf:rgba(166,210,58,.36)}
   .k-video{--k:#2EC4C4;--kb:rgba(46,196,196,.24);--kh:rgba(46,196,196,.40);--kl:rgba(46,196,196,.70);--kf:rgba(46,196,196,.38)}
   .sesion.k-ent{--k:#4AA3FF;--kb:rgba(74,163,255,.24);--kh:rgba(74,163,255,.40);--kl:rgba(74,163,255,.70);--kf:rgba(74,163,255,.38)}
   .sesion.k-cla{--k:#F08A24;--kb:rgba(240,138,36,.24);--kh:rgba(240,138,36,.40);--kl:rgba(240,138,36,.70);--kf:rgba(240,138,36,.38)}
@@ -509,6 +512,7 @@ var FECHAS = [
       precarrera: "p:/Precarrera-viedma-2026.html",
       sectores:   "p:/Sectores_Viedma.html",
       sectoresTitulo: "Sectores y marchas",
+      caja:       "p:/Caja_Viedma.html",
       video:      "p:/Video_Pernia_Viedma_2024.mp4"
     },
     eventos: [
@@ -681,6 +685,7 @@ var FECHAS = [
     { clave:"cronograma", t:"Cronograma" },
     { clave:"precarrera", t:"Pre Carrera" },
     { clave:"sectores",   t:"Sectores Cronometrados" },
+    { clave:"caja",       t:"Uso de la caja", desde:12 },   /* desde Viedma (fecha 12) en adelante */
     { clave:"video",      t:"Video a bordo", opcional:true }   /* sólo aparece si está cargado */
   ];
 
@@ -731,6 +736,7 @@ var FECHAS = [
     MATERIAL.forEach(function(m){
       var u = f.finde && f.finde[m.clave];
       if(!u && m.opcional) return;
+      if(m.desde && !(f.nro >= m.desde)) return;
       if(u){
         var a = el("a","chip k-" + m.clave);
         a.href = direccion(u);

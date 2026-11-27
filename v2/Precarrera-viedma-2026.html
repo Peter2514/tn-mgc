@@ -357,6 +357,31 @@ svg{display:block;max-width:100%;height:auto}
 }
 .pal{display:flex;gap:10px;align-items:center}.pal label{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);cursor:pointer}.pal input{width:26px;height:22px;padding:0;border:1px solid var(--panel-line);border-radius:5px;background:none;cursor:pointer}.hright{gap:8px}
 [hidden]{display:none!important}
+.vcard .vctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
+.vcard .vctl button{background:var(--surface-2);border:1px solid var(--panel-line);color:var(--ink-2);border-radius:7px;height:32px;min-width:34px;padding:0 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.vcard .vctl button:hover{color:var(--ink);border-color:var(--muted)}
+.vcard .vctl button:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.vcard .vctl button.on{color:var(--ink);border-color:var(--red);background:var(--glow-b)}
+.vcard .vctl .lab{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-left:6px}
+.vcard .vctl .sp{flex:1}
+.vstage{position:relative;height:clamp(380px,64vh,780px);border:1px solid var(--panel-line);border-radius:10px;background:var(--surface-2);overflow:hidden;touch-action:none;cursor:grab}
+.vstage:active{cursor:grabbing}
+.vstage canvas{display:block;width:100%;height:100%}
+.vread{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.vread .vb{border:1px solid var(--panel-line);border-radius:10px;padding:9px 12px;background:var(--surface-2);display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-width:0}
+.vread .vn{font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:12px;min-width:110px}
+.vread .vg{font-size:30px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;min-width:46px;text-align:center;border-radius:8px;padding:4px 6px;color:#101012}
+.vread .vk{display:flex;flex-direction:column;font-variant-numeric:tabular-nums}
+.vread .vk span{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.vread .vk b{font-size:16px;color:var(--ink)}
+.vread .vbar{flex:1;min-width:80px;height:8px;border-radius:4px;background:var(--panel-line);overflow:hidden}
+.vread .vbar i{display:block;height:100%;border-radius:4px}
+.vscrub{display:flex;align-items:center;gap:10px;margin-top:10px;font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink-2)}
+.vscrub input{flex:1;accent-color:var(--red)}
+.vstrip{margin-top:12px}
+.vstrip canvas{display:block;width:100%;height:96px}
+@media(max-width:620px){.vread{grid-template-columns:1fr}.vstage{height:clamp(320px,58vh,600px)}}
+
 .pcard{position:relative}
 .pbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
 .pbar button{background:var(--surface-2);border:1px solid var(--panel-line);color:var(--ink-2);border-radius:7px;min-width:34px;height:32px;padding:0 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.04em}
@@ -611,6 +636,27 @@ ul.refs li .nb{position:absolute;left:4px;top:6px;width:24px;height:24px;border-
     <span style="color:var(--muted)">El ancho es g de apoyo lateral · la regla de la meta marca 0,5 y 1,0 g a cada lado</span>
   </div>
   <p class="note">Jon usa <b>más apoyo lateral</b>: 1,69 g contra 1,54 en las curvas más exigidas. Donde más rinde es en el <b>curvón</b>: con ese apoyo lleva 3 km/h más por toda la curva.</p>
+</div>
+
+
+<div class="card vcard" id="vcard">
+  <h2><span class="dot" style="background:var(--red)"></span>La vuelta en movimiento</h2>
+  <p class="hint">Los dos autos recorren la vuelta al mismo tiempo, cada uno con su velocidad real, así que se ve cómo uno se escapa o se acerca. Cada auto lleva su globito con la marcha, la velocidad y las vueltas del motor; abajo están las vueltas del motor de cada uno. Arranca solo. Para detenerlo donde quieras, <b>tocá el plano</b> (o la barra espaciadora); tocá de nuevo y sigue. Con los botones de cada curva lo llevás directo ahí, detenido, y con la barra lo movés punto por punto. <b>Arrastrá el plano para girarlo o inclinarlo</b>, y acercate con la rueda del mouse o con dos dedos.</p>
+  <div class="vctl">
+    <button type="button" id="vPlay" style="min-width:90px">▶ Andar</button>
+    <button type="button" id="vRst" title="Volver a la largada">⏮</button>
+    <span class="lab">Ir a</span><span id="vGo" style="display:contents"></span>
+    <span class="lab">Velocidad</span>
+    <button type="button" data-sp="0.25">×¼</button><button type="button" data-sp="0.5">×½</button><button type="button" data-sp="1" class="on">×1</button><button type="button" data-sp="2">×2</button>
+    <span class="sp"></span>
+    <button type="button" id="vTop">Desde arriba</button>
+    <button type="button" id="vPer">En perspectiva</button>
+    <button type="button" id="vFol">Seguir a los autos</button>
+  </div>
+  <div class="vstage" id="vstage"><canvas id="vcv" aria-label="Pista con los dos autos y la marcha de cada uno"></canvas></div>
+  <div class="vscrub"><span id="vT">0,0 s</span><input type="range" id="vRange" min="0" max="1000" value="0" aria-label="Momento de la vuelta"><span id="vGap"></span></div>
+  <div class="vread" id="vread"></div>
+  <div class="vstrip"><canvas id="vstrip" aria-label="Marcha a lo largo de la vuelta"></canvas></div>
 </div>
 
 <div class="section-title"><span class="n">03</span> Sectores</div>
@@ -2312,6 +2358,156 @@ const PISTA={"step":2.0,"len":4066.9,"m":[[-329.01,-327.68,-326.35,-325.02,-323.
     `<span><i style="background:var(--s3c);opacity:.6"></i>Entrada</span><span><i style="background:var(--s5c);opacity:.6"></i>Tránsito</span><span><i style="background:var(--best);opacity:.6"></i>Salida</span>`+
     `<span style="color:var(--muted)">■ inicio de frenada · ● vértice · ▲ inicio de aceleración · círculo punteado: radio en el vértice</span>`;
   requestAnimationFrame(all);
+})();
+</script>
+
+<script>
+(function(){
+  const CAJA={"R":[2.4285714285714284,1.8888888888888888,1.5625,1.3181818181818181,1.12,0.9615384615384616],"diff":4.3,"per":1.95,"corte":8500}, P=PISTA, n=P.m[0].length, ST=P.step, LEN=P.len;
+  const GCOL=['#9b6cff','#3d8bff','#19b9c9','#35c46a','#f0b43a','#ff7a3d'];
+  const K=CAJA.diff*60/(3.6*CAJA.per);
+  const TL={M:95.296,Y:95.179};
+  // tiempo acumulado por metro, ajustado al tiempo de vuelta
+  function prep(key,L,vel){
+    const t=new Float64Array(n+1); for(let i=0;i<n;i++){t[i+1]=t[i]+ST/Math.max(vel[i],5)*3.6;}
+    const f=TL[key]/t[n]; for(let i=0;i<=n;i++) t[i]*=f;
+    // marcha según cómo usa la caja el equipo en Viedma (curva, marcha en la curva, marchas en la recta siguiente)
+    const g=new Int8Array(n).fill(-1), rp=(v,k)=>v*CAJA.R[k]*K, I=d=>Math.round(d/ST), W=i=>((i%n)+n)%n;
+    const Z=P.zones, PLAN=[[0,5,[5,6]],[1,3,[3,4,5]],[2,3,[3,4]],[3,2,[2,3,4,5]],[4,2,[2,3,4,5]],[5,5,[5,6]],[6,1,[1,2,3,4,5,6]]];
+    const minOk=v=>{for(let k=0;k<6;k++) if(rp(v,k)<=CAJA.corte+200) return k; return 5;};
+    PLAN.forEach(([c,gc,seq],pi)=>{
+      const z=Z[c], nx=PLAN[(pi+1)%PLAN.length], zn=Z[nx[0]], gn=nx[1];
+      // en la curva
+      for(let i=I(z.tin);i<=I(z.tout);i++){const j=W(i); g[j]=Math.max(gc-1,minOk(vel[j]));}
+      // recta hasta la curva siguiente
+      let e=I(z.tout)+1, bb=I(zn.tin)-1; if(bb<e) bb+=n;
+      let m=e; for(let i=e;i<=bb;i++) if(vel[W(i)]>vel[W(m)]) m=i;
+      let best=null;
+      for(let R=CAJA.corte;R>=4000;R-=50){ let k=0; for(let i=e;i<=m;i++){ if(k<seq.length-1 && rp(vel[W(i)],seq[k]-1)>=R) k++; } if(k===seq.length-1){best=R;break;} }
+      if(best===null) best=4000;
+      let k=0, cur=seq[0]-1;
+      for(let i=e;i<=bb;i++){ const v=vel[W(i)];
+        if(i<=m){ if(k<seq.length-1 && rp(v,cur)>=best){k++; cur=seq[k]-1;} }
+        else { while(cur>gn-1 && rp(v,cur-1)<=CAJA.corte-300) cur--; }
+        g[W(i)]=Math.max(cur,minOk(v)); }
+    });
+    for(let i=0;i<n;i++) if(g[i]<0) g[i]=g[W(i-1)]>=0?g[W(i-1)]:minOk(vel[i]);
+    return {key,L,vel,t,g};
+  }
+  const D={M:prep('M',P.m,P.vm),Y:prep('Y',P.v,P.vv)};
+  const T=Math.max(TL.M,TL.Y);
+  function idxAt(d,tt){ // distancia recorrida en el tiempo tt
+    if(tt>=d.t[n]) return n-1e-6; let lo=0,hi=n; while(hi-lo>1){const m=(lo+hi)>>1; if(d.t[m]<=tt) lo=m; else hi=m;}
+    return lo+(tt-d.t[lo])/Math.max(1e-6,d.t[lo+1]-d.t[lo]); }
+  const lerp=(arr,f)=>{const i=Math.floor(f)%n,j=(i+1)%n,a=f-Math.floor(f);return arr[i]+(arr[j]-arr[i])*a;};
+  const posAt=(d,f)=>[lerp(d.L[0],f),lerp(d.L[1],f)];
+  // ---- cámara ----
+  const cv=document.getElementById('vcv'), st=document.getElementById('vstage'), ctx=cv.getContext('2d');
+  let yaw=0, pitch=0.95, zoom=1, follow=false, ctr=[0,0];
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9; for(let i=0;i<n;i++){const x=P.v[0][i],y=P.v[1][i];x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);}
+  const span=Math.max(x1-x0,y1-y0), mid=[(x0+x1)/2,(y0+y1)/2]; ctr=mid.slice();
+  let W=0,H=0,dpr=1;
+  function size(){const r=st.getBoundingClientRect();dpr=window.devicePixelRatio||1;W=r.width;H=r.height;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);}
+  function proj(x,y,z){ // z hacia arriba en metros
+    x-=ctr[0]; y-=ctr[1];
+    const c=Math.cos(yaw),s=Math.sin(yaw); const xr=x*c-y*s, yr=x*s+y*c;
+    const sc=Math.min(W,H)/span*0.92*zoom, Dd=span*1.6/zoom;
+    const depth=-yr*Math.sin(pitch); const f=Dd/(Dd+depth*0.9);
+    return [W/2+xr*sc*f, H/2+yr*Math.cos(pitch)*sc*f, f];
+  }
+  const V=k=>getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+  let tNow=0, playing=false, spd=1, last=null;
+  function draw(){
+    if(!W) size(); ctx.clearRect(0,0,W,H);
+    const fM=idxAt(D.M,tNow), fY=idxAt(D.Y,tNow);
+    if(follow){const a=posAt(D.Y,fY),b=posAt(D.M,fM);ctr=[(a[0]+b[0])/2,(a[1]+b[1])/2];}
+    const cA=V('--a'), cB=V('--b'), ink=V('--ink'), mut=V('--muted'), surf=V('--surface');
+    // sombra de la pista
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.beginPath(); for(let i=0;i<=n;i++){const p=proj(P.v[0][i%n],P.v[1][i%n],0); i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}
+    ctx.strokeStyle=V('--grid'); ctx.lineWidth=Math.max(12,18*Math.sqrt(zoom)); ctx.stroke();
+    // líneas finas de cada uno
+    [[D.M,cA],[D.Y,cB]].forEach(([d,c])=>{ctx.beginPath();for(let k=0;k<=n;k++){const p=proj(d.L[0][k%n],d.L[1][k%n],0);k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.strokeStyle=c;ctx.lineWidth=1.3;ctx.globalAlpha=.9;ctx.stroke();ctx.globalAlpha=1;});
+    // meta
+    { const p=proj(P.v[0][0],P.v[1][0],0); ctx.fillStyle=ink; ctx.fillRect(p[0]-2,p[1]-9,4,18); ctx.fillStyle=mut; ctx.font='700 10px system-ui,sans-serif'; ctx.textAlign='left'; ctx.fillText('META',p[0]+7,p[1]-12); }
+    // autos con su marcha arriba
+    const car=(d,f,c,lab,dy)=>{ const p=posAt(d,f), q=proj(p[0],p[1],0), p2=posAt(d,(f+3)%n), q2=proj(p2[0],p2[1],0);
+      const gi=d.g[Math.floor(f)%n], h=44+dy, ang=Math.atan2(q2[1]-q[1],q2[0]-q[0]);
+      ctx.strokeStyle=c; ctx.lineWidth=2; ctx.globalAlpha=.8; ctx.beginPath(); ctx.moveTo(q[0],q[1]); ctx.lineTo(q[0],q[1]-h); ctx.stroke(); ctx.globalAlpha=1;
+      // el auto: una flecha que apunta hacia donde va
+      ctx.save(); ctx.translate(q[0],q[1]); ctx.rotate(ang); ctx.fillStyle=c; ctx.strokeStyle=surf; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(12,0); ctx.lineTo(-8,-7); ctx.lineTo(-4,0); ctx.lineTo(-8,7); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+      // globito: marcha grande y velocidad
+      const bw=104,bh=40,bx=q[0]-bw/2,by=q[1]-h-bh; const rpmv=Math.round(lerp(d.vel,f)*CAJA.R[gi]*K/10)*10; ctx.fillStyle=surf; ctx.strokeStyle=c; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect?ctx.roundRect(bx,by,bw,bh,8):ctx.rect(bx,by,bw,bh); ctx.fill(); ctx.stroke();
+      ctx.fillStyle=GCOL[gi]; ctx.beginPath(); ctx.roundRect?ctx.roundRect(bx+4,by+4,34,bh-8,6):ctx.rect(bx+4,by+4,34,bh-8); ctx.fill();
+      ctx.fillStyle='#101012'; ctx.font='800 19px system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText((gi+1)+'ª',bx+21,by+bh/2+1);
+      ctx.fillStyle=ink; ctx.font='700 12px system-ui,sans-serif'; ctx.textAlign='left'; ctx.fillText(Math.round(lerp(d.vel,f))+' km/h',bx+43,by+13);
+      ctx.fillStyle=rpmv>=CAJA.corte-150?V('--b'):V('--ink-2'); ctx.font='600 11px system-ui,sans-serif'; ctx.fillText(rpmv.toLocaleString('es-AR')+' rpm',bx+43,by+28); };
+    const ahead = fY>=fM; // el de atrás se dibuja primero
+    if(ahead){car(D.M,fM,cA,NA,0);car(D.Y,fY,cB,NB,46);} else {car(D.Y,fY,cB,NB,0);car(D.M,fM,cA,NA,46);}
+    readout(fM,fY);
+  }
+  // ---- lecturas ----
+  const rd=document.getElementById('vread');
+  rd.innerHTML=[['Y',NB,'var(--b)'],['M',NA,'var(--a)']].map(([k,nm,c])=>`<div class="vb"><span class="vn" style="color:${c}">${nm}</span><span class="vg" id="vg${k}">1</span>
+    <span class="vk"><span>Velocidad</span><b id="vv${k}">—</b></span><span class="vk"><span>Vueltas del motor</span><b id="vr${k}">—</b></span><span class="vbar"><i id="vbr${k}"></i></span></div>`).join('');
+  const fmt=v=>v.toLocaleString('es-AR');
+  function readout(fM,fY){
+    [['M',D.M,fM],['Y',D.Y,fY]].forEach(([k,d,f])=>{const v=lerp(d.vel,f), gi=d.g[Math.floor(f)%n], rpm=Math.round(v*CAJA.R[gi]*K/10)*10;
+      const e=document.getElementById('vg'+k); e.textContent=(gi+1)+'ª'; e.style.background=GCOL[gi];
+      document.getElementById('vv'+k).textContent=Math.round(v)+' km/h'; document.getElementById('vr'+k).textContent=fmt(rpm)+' rpm';
+      const b=document.getElementById('vbr'+k); b.style.width=Math.min(100,rpm/CAJA.corte*100)+'%'; b.style.background=GCOL[gi];});
+    document.getElementById('vT').textContent=tNow.toFixed(1).replace('.',',')+' s';
+    const dm=(fY-fM)*ST; document.getElementById('vGap').textContent=Math.abs(dm)<1?'Parejos':((dm>0?NB:NA)+' adelante '+Math.round(Math.abs(dm))+' m');
+    if(!scrubbing) document.getElementById('vRange').value=Math.round(tNow/T*1000);
+    drawStrip(fM,fY);
+  }
+  // ---- tira de marchas ----
+  const sc=document.getElementById('vstrip'), sx=sc.getContext('2d');
+  function drawStrip(fM,fY){
+    const r=sc.getBoundingClientRect(), w=r.width, hh=96; if(!w) return; const dp=window.devicePixelRatio||1;
+    if(sc.width!==Math.round(w*dp)){sc.width=Math.round(w*dp);sc.height=Math.round(hh*dp);} sx.setTransform(dp,0,0,dp,0,0); sx.clearRect(0,0,w,hh);
+    const L0=92, ww=w-L0-6, X=i=>L0+i/n*ww;
+    [['Y',NB,'--b',8],['M',NA,'--a',42]].forEach(([k,nm,c,y])=>{ const d=D[k];
+      sx.fillStyle=V(c); sx.font='700 11px system-ui,sans-serif'; sx.textAlign='right'; sx.textBaseline='middle'; sx.fillText(nm,L0-8,y+13);
+      let i=0; while(i<n){const g=d.g[i]; let j=i+1; while(j<n&&d.g[j]===g) j++; sx.fillStyle=GCOL[g]; sx.fillRect(X(i),y,Math.max(1,X(j)-X(i)-.5),26);
+        if(X(j)-X(i)>16){sx.fillStyle='#101012';sx.font='800 11px system-ui,sans-serif';sx.textAlign='center';sx.fillText(String(g+1),(X(i)+X(j))/2,y+13.5);} i=j;}
+      const f=k==='M'?fM:fY; sx.fillStyle=V('--ink'); sx.fillRect(X(f)-1.5,y-3,3,32); });
+    sx.fillStyle=V('--muted'); sx.font='600 10px system-ui,sans-serif'; sx.textAlign='center';
+    (P.zones||[]).forEach(z=>{const i=((z.apm+z.apy)/2)/ST; sx.fillText(z.n,X(i),86);});
+  }
+  // ---- animación ----
+  function tick(ts){ if(!playing){last=null;return;} if(last!==null){tNow+=(ts-last)/1000*spd; if(tNow>T+1.5) tNow=0;} last=ts; draw(); requestAnimationFrame(tick); }
+  const pb=document.getElementById('vPlay');
+  function setPlay(on){playing=on;pb.textContent=on?'❚❚ Parar':'▶ Andar'; if(on){last=null;requestAnimationFrame(tick);} }
+  pb.onclick=()=>setPlay(!playing);
+  document.getElementById('vRst').onclick=()=>{tNow=0;draw();};
+  document.querySelectorAll('.vctl [data-sp]').forEach(b=>b.onclick=()=>{spd=+b.dataset.sp;document.querySelectorAll('.vctl [data-sp]').forEach(x=>x.classList.toggle('on',x===b));});
+  const fol=document.getElementById('vFol');
+  document.getElementById('vTop').onclick=()=>{pitch=0;yaw=0;zoom=1;follow=false;fol.classList.remove('on');ctr=mid.slice();draw();};
+  document.getElementById('vPer').onclick=()=>{pitch=.95;yaw=0;zoom=1;follow=false;fol.classList.remove('on');ctr=mid.slice();draw();};
+  fol.onclick=()=>{follow=!follow;fol.classList.toggle('on',follow);if(follow&&zoom<3)zoom=3.2;if(!follow){ctr=mid.slice();zoom=1;}draw();};
+  let scrubbing=false; const rg=document.getElementById('vRange');
+  rg.addEventListener('input',()=>{scrubbing=true;tNow=rg.value/1000*T;draw();scrubbing=false;});
+  // girar, inclinar y acercar
+  const ptr=new Map(); let lp=null,pin=null;
+  let mv=0; st.addEventListener('pointerdown',e=>{st.setPointerCapture(e.pointerId);ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});lp={x:e.clientX,y:e.clientY};pin=null;mv=0;});
+  st.addEventListener('pointermove',e=>{ if(!ptr.has(e.pointerId))return; ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(ptr.size>=2){const [a,b]=[...ptr.values()],d=Math.hypot(a.x-b.x,a.y-b.y); if(pin) zoom=Math.min(12,Math.max(.5,zoom*d/pin)); pin=d; draw(); return;}
+    if(lp){ mv+=Math.abs(e.clientX-lp.x)+Math.abs(e.clientY-lp.y); yaw+=(e.clientX-lp.x)*0.006; pitch=Math.min(1.25,Math.max(0,pitch+(e.clientY-lp.y)*0.004)); lp={x:e.clientX,y:e.clientY}; draw(); }});
+  const up=e=>{ const was=ptr.has(e.pointerId); ptr.delete(e.pointerId); if(was&&ptr.size===0&&mv<6&&e.type==='pointerup') setPlay(!playing); pin=null;lp=ptr.size===1?{...[...ptr.values()][0]}:null;};
+  document.addEventListener('keydown',e=>{ if(e.code==='Space'){ const r=st.getBoundingClientRect(); if(r.bottom>0&&r.top<innerHeight&&!/INPUT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();setPlay(!playing);} } });
+  const go=document.getElementById('vGo');
+  P.zones.forEach(z=>{const b=document.createElement('button');b.type='button';b.textContent=z.n;b.title='Ir a '+(z.al||z.n);
+    b.onclick=()=>{ setPlay(false); const i=Math.round(((z.apm+z.apy)/2)/ST); tNow=Math.min(D.Y.t[i],D.M.t[i]); draw(); }; go.appendChild(b);});
+  st.addEventListener('pointerup',up); st.addEventListener('pointercancel',up);
+  st.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.min(12,Math.max(.5,zoom*(e.deltaY<0?1.15:1/1.15)));draw();},{passive:false});
+  window.addEventListener('resize',()=>{size();draw();});
+  document.querySelectorAll('#colA,#colB').forEach(i=>i.addEventListener('input',()=>setTimeout(draw,30)));
+  size(); tNow=0; draw();
+  const red=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let auto=false;
+  if(!red && 'IntersectionObserver' in window){ new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting && !auto){auto=true; setPlay(true);} }); },{threshold:.35}).observe(st); }
 })();
 </script>
 </body>
